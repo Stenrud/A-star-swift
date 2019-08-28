@@ -758,7 +758,7 @@
                     </view>
                     <connections>
                         <outlet property="customView" destination="XTi-Hd-5tI" id="F9P-yb-oIg"/>
-                        <outlet property="graphicsView" destination="XTi-Hd-5tI" id="X9h-tQ-0e6"/>
+                        <outlet property="graphicsView" destination="XTi-Hd-5tI" id="XyJ-4E-o31"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

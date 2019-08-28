@@ -12,20 +12,23 @@ var number = 1
 
 class GraphicsView : NSView{
     
-    var map: [[Int]] = []
+    var map: [[Character]] = []
     var solution: [NSPoint] = []
     var algo: AStarInstance?
     
     var numberToColor = [
-        -2 : NSColor.yellow,
-        -1 : NSColor.yellow,
-        0 : NSColor.white,
-        1 : NSColor.black,
-        2 : NSColor.green,
-        3 : NSColor.gray
+        "#" : NSColor.black,
+        "A" : NSColor.yellow,
+        "B" : NSColor.yellow,
+        "." : NSColor.white,
+        "r" : NSColor.brown,
+        "g" : NSColor.green,
+        "f" : NSColor.orange,
+        "m" : NSColor.gray,
+        "w" : NSColor.blue
     ]
     
-    func loadMap(_ map: [[Int]]){
+    func loadMap(_ map: [[Character]]){
         
         if map.isEmpty{
             print("tried to set empty map")
@@ -55,7 +58,7 @@ class GraphicsView : NSView{
             
             for y in 0...map[x].count - 1{
                 
-                numberToColor[map[x][y]]?.setFill()
+                numberToColor[String(map[x][y])]?.setFill()
                 NSRect(x: CGFloat(x)*pixelWidth, y: CGFloat(y)*pixelHeight, width: pixelWidth, height: pixelHeight).fill()
                 
             }

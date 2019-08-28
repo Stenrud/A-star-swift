@@ -11,7 +11,7 @@ import Cocoa
 
 class AStarInstance{
     
-    var board:[[Int]]
+    var board:[[Character]]
     var start: NSPoint
     var end: NSPoint
     var start_node: Node
@@ -21,10 +21,10 @@ class AStarInstance{
     var closed: [Node] = []
     
     
-    init(board: [[Int]], start: NSPoint, end: NSPoint) {
+    init(board: [[Character]]) {
         self.board = board
-        self.start = start
-        self.end = end
+        self.start = Generator.FindStart(board)
+        self.end = Generator.FindEnd(board)
         start_node = Node(nil, start)
         end_node = Node(nil, end)
         open.append(start_node)
@@ -62,8 +62,8 @@ class AStarInstance{
         }
         
         var children : [Node] = []
-        
-        for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1)]{
+//        for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1)]{
+        for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0)]{
             let nodeX = Int(current_node.point.x) + new_position.0
             let nodeY = Int(current_node.point.y) + new_position.1
             
@@ -71,7 +71,7 @@ class AStarInstance{
                 continue
             }
             
-            if(board[nodeX][nodeY] != 0){
+            if(board[nodeX][nodeY] == "#"){
                 continue
             }
             
@@ -86,14 +86,28 @@ class AStarInstance{
                 continue
             }
             
-            child.g = current_node.g + 1
-            let a = pow(child.point.x - end_node.point.x, 2.0)
-            let b = pow(child.point.y - end_node.point.y, 2.0)
+            child.g = current_node.g + convert(board[Int(child.point.x)][Int(child.point.y)])
+            let a = abs(child.point.x - end_node.point.x)
+            let b = abs(child.point.y - end_node.point.y)
             child.h =  Int(a + b)
             child.f = child.g + child.h
             
-            if(!open.contains(where: { x -> Bool in x.point == child.point && x.g < child.g }))
-            {
+            for (i, open_cell) in open.enumerated(){
+                if(open_cell.point == child.point){
+                    if(open_cell.g > child.g){
+                        open[i] = child
+                    }
+                    break
+                }
+            }
+            
+            let i = open.firstIndex { open_node -> Bool in open_node.point == child.point}
+            
+            if let index = i{
+                if(child.g < open[index].g){
+                    open[index] = child
+                }
+            }else{
                 open.append(child)
             }
             
@@ -113,5 +127,26 @@ class AStarInstance{
         return []
     }
 
-    
+    func convert(_ char: Character) -> Int{
+        switch char {
+        case "w":
+            return 100
+        case "m":
+            return 50
+        case "f":
+            return 10
+        case "g":
+            return 5
+        case "r":
+            return 1
+        case "B":
+            return 0
+        case "A":
+            return 0
+        case "#":
+            return -1
+        default:
+            return 0
+        }
+    }
 }

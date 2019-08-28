@@ -12,7 +12,7 @@ class ViewController: NSViewController {
 
     @IBOutlet weak var graphicsView: GraphicsView!
     
-    var board : [[Int]] = []
+    var board : [[Character]] = []
     var solver: AStarInstance?
     var timer = Timer()
     
@@ -21,8 +21,8 @@ class ViewController: NSViewController {
         
        // let map = Generator.GenerateBoard()
         
-        board = Generator.GenerateBoard()
-        solver = AStarInstance(board: board, start: NSPoint(x: 1, y: 1), end: NSPoint(x: 31, y: 24))
+        board = Generator.GenerateBoard2()
+        solver = AStarInstance(board: board)
         graphicsView.loadMap(board)
         graphicsView.loadAStar(solver!)
 
@@ -50,7 +50,7 @@ class ViewController: NSViewController {
 
     @IBAction func ShowAnimation(_ sender: Any) {
         timer.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true, block: { _ in
+        timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true, block: { _ in
             self.TakeOneStep()
         })
         
@@ -70,7 +70,7 @@ class ViewController: NSViewController {
     }
     
     @IBAction func Reset(_ sender: Any) {
-        solver = AStarInstance(board: board, start: NSPoint(x: 1, y: 1), end: NSPoint(x: 15, y: 12))
+        solver = AStarInstance(board: board)
         
         graphicsView.loadAStar(solver!)
         graphicsView.solution = []
