@@ -22,7 +22,7 @@ class ViewController: NSViewController {
        // let map = Generator.GenerateBoard()
         
         board = Generator.GenerateBoard()
-        solver = AStarInstance(board: board, start: NSPoint(x: 1, y: 1), end: NSPoint(x: 15, y: 12))
+        solver = AStarInstance(board: board, start: NSPoint(x: 1, y: 1), end: NSPoint(x: 31, y: 24))
         graphicsView.loadMap(board)
         graphicsView.loadAStar(solver!)
 

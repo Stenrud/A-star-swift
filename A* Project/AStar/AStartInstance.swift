@@ -92,7 +92,7 @@ class AStarInstance{
             child.h =  Int(a + b)
             child.f = child.g + child.h
             
-            if(!open.contains(where: { x -> Bool in x.point == child.point }))
+            if(!open.contains(where: { x -> Bool in x.point == child.point && x.g < child.g }))
             {
                 open.append(child)
             }
