@@ -11,6 +11,10 @@
 		FB0156C42315AA0A00E6A327 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB0156C32315AA0A00E6A327 /* ViewController.swift */; };
 		FB0156C62315AA0B00E6A327 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FB0156C52315AA0B00E6A327 /* Assets.xcassets */; };
 		FB0156C92315AA0B00E6A327 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FB0156C72315AA0B00E6A327 /* Main.storyboard */; };
+		FB0156D32315AF8C00E6A327 /* Generator.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB0156D22315AF8C00E6A327 /* Generator.swift */; };
+		FB0156D72315BE3A00E6A327 /* GraphivsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB0156D62315BE3A00E6A327 /* GraphivsView.swift */; };
+		FBCCC1742315D5DA008A12C8 /* AStartInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBCCC1732315D5DA008A12C8 /* AStartInstance.swift */; };
+		FBCCC1772315D887008A12C8 /* Node.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBCCC1762315D887008A12C8 /* Node.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,6 +25,10 @@
 		FB0156C82315AA0B00E6A327 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		FB0156CA2315AA0B00E6A327 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FB0156CB2315AA0B00E6A327 /* A__Project.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = A__Project.entitlements; sourceTree = "<group>"; };
+		FB0156D22315AF8C00E6A327 /* Generator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Generator.swift; sourceTree = "<group>"; };
+		FB0156D62315BE3A00E6A327 /* GraphivsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphivsView.swift; sourceTree = "<group>"; };
+		FBCCC1732315D5DA008A12C8 /* AStartInstance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AStartInstance.swift; sourceTree = "<group>"; };
+		FBCCC1762315D887008A12C8 /* Node.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Node.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,14 +61,34 @@
 		FB0156C02315AA0A00E6A327 /* A* Project */ = {
 			isa = PBXGroup;
 			children = (
+				FBCCC1752315D877008A12C8 /* AStar */,
+				FB0156D12315AF7000E6A327 /* BoardMaker */,
 				FB0156C12315AA0A00E6A327 /* AppDelegate.swift */,
 				FB0156C32315AA0A00E6A327 /* ViewController.swift */,
 				FB0156C52315AA0B00E6A327 /* Assets.xcassets */,
 				FB0156C72315AA0B00E6A327 /* Main.storyboard */,
 				FB0156CA2315AA0B00E6A327 /* Info.plist */,
 				FB0156CB2315AA0B00E6A327 /* A__Project.entitlements */,
+				FB0156D62315BE3A00E6A327 /* GraphivsView.swift */,
 			);
 			path = "A* Project";
+			sourceTree = "<group>";
+		};
+		FB0156D12315AF7000E6A327 /* BoardMaker */ = {
+			isa = PBXGroup;
+			children = (
+				FB0156D22315AF8C00E6A327 /* Generator.swift */,
+			);
+			path = BoardMaker;
+			sourceTree = "<group>";
+		};
+		FBCCC1752315D877008A12C8 /* AStar */ = {
+			isa = PBXGroup;
+			children = (
+				FBCCC1732315D5DA008A12C8 /* AStartInstance.swift */,
+				FBCCC1762315D887008A12C8 /* Node.swift */,
+			);
+			path = AStar;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -133,6 +161,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FB0156D72315BE3A00E6A327 /* GraphivsView.swift in Sources */,
+				FB0156D32315AF8C00E6A327 /* Generator.swift in Sources */,
+				FBCCC1742315D5DA008A12C8 /* AStartInstance.swift in Sources */,
+				FBCCC1772315D887008A12C8 /* Node.swift in Sources */,
 				FB0156C42315AA0A00E6A327 /* ViewController.swift in Sources */,
 				FB0156C22315AA0A00E6A327 /* AppDelegate.swift in Sources */,
 			);
