@@ -30,8 +30,14 @@ class ViewController: NSViewController {
         // Do any additional setup after loading the view.
     }
 
-    func test(){
-        solver!.step()
+    func TakeOneStep(){
+        let path = solver!.step()
+        
+        if(path != nil)
+        {
+            graphicsView.solution = path!
+            timer.invalidate()
+        }
         graphicsView.needsDisplay = true
     }
     
@@ -42,10 +48,10 @@ class ViewController: NSViewController {
         }
     }
 
-    @IBAction func sayHello(_ sender: Any) {
-        
+    @IBAction func ShowAnimation(_ sender: Any) {
+        timer.invalidate()
         timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true, block: { _ in
-            self.test()
+            self.TakeOneStep()
         })
         
         //var solution = solver!.execute()
@@ -53,10 +59,23 @@ class ViewController: NSViewController {
         //graphicsView.needsDisplay = true
     }
     
-    
-    func drawSomething(){
-       
+    @IBAction func NoAnimation(_ sender: Any) {
+        let solution = solver!.execute()
+        
+        if(!solution.isEmpty){
+            graphicsView.solution = solution
+            graphicsView.needsDisplay = true
+        }
+
     }
     
+    @IBAction func Reset(_ sender: Any) {
+        solver = AStarInstance(board: board, start: NSPoint(x: 1, y: 1), end: NSPoint(x: 15, y: 12))
+        
+        graphicsView.loadAStar(solver!)
+        graphicsView.solution = []
+        timer.invalidate()
+        graphicsView.needsDisplay = true
+    }
 }
 

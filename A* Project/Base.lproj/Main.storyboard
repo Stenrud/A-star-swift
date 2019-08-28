@@ -713,22 +713,44 @@
                                 <rect key="frame" x="0.0" y="60" width="480" height="210"/>
                             </customView>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uYX-qa-JdC">
-                                <rect key="frame" x="193" y="12" width="95" height="32"/>
-                                <buttonCell key="cell" type="push" title="Say hello" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="u4A-gA-z3H">
+                                <rect key="frame" x="31" y="13" width="133" height="32"/>
+                                <buttonCell key="cell" type="push" title="ShowAnimation" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="u4A-gA-z3H">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="sayHello:" target="XfG-lQ-9wD" id="xWH-gb-0UA"/>
+                                    <action selector="ShowAnimation:" target="XfG-lQ-9wD" id="xWH-gb-0UA"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PP3-JY-w1c">
+                                <rect key="frame" x="181" y="13" width="118" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="push" title="NoAnimation" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="nfJ-QQ-NhH">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="NoAnimation:" target="XfG-lQ-9wD" id="DND-DT-LxR"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Fyh-T7-SWw">
+                                <rect key="frame" x="343" y="13" width="75" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="push" title="Reset" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="EYJ-QN-ko9">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="Reset:" target="XfG-lQ-9wD" id="TTN-uA-0px"/>
                                 </connections>
                             </button>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="uYX-qa-JdC" firstAttribute="top" secondItem="XTi-Hd-5tI" secondAttribute="bottom" constant="20" symbolic="YES" id="Ala-zX-yx8"/>
+                            <constraint firstItem="uYX-qa-JdC" firstAttribute="top" secondItem="XTi-Hd-5tI" secondAttribute="bottom" constant="19" id="Ala-zX-yx8"/>
                             <constraint firstItem="XTi-Hd-5tI" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="F1b-ED-Bwc"/>
                             <constraint firstAttribute="bottom" secondItem="XTi-Hd-5tI" secondAttribute="bottom" constant="60" id="VDT-3f-mAL"/>
                             <constraint firstItem="XTi-Hd-5tI" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="gYW-J1-uUh"/>
-                            <constraint firstItem="uYX-qa-JdC" firstAttribute="centerX" secondItem="XTi-Hd-5tI" secondAttribute="centerX" id="qdF-mA-XyR"/>
+                            <constraint firstItem="uYX-qa-JdC" firstAttribute="centerX" secondItem="XTi-Hd-5tI" secondAttribute="centerX" constant="-142.5" id="qdF-mA-XyR"/>
                             <constraint firstAttribute="trailing" secondItem="XTi-Hd-5tI" secondAttribute="trailing" id="xT3-zk-SKf"/>
                         </constraints>
                     </view>
