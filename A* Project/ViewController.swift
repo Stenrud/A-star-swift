@@ -11,8 +11,9 @@ import Cocoa
 class ViewController: NSViewController {
 
     @IBOutlet weak var graphicsView: GraphicsView!
+    @IBOutlet weak var mazes: NSPopUpButtonCell!
+    @IBOutlet weak var speedSlider: NSSliderCell!
     
-    var board : [[Character]] = []
     var solver: AStarInstance?
     var timer = Timer()
     
@@ -21,24 +22,54 @@ class ViewController: NSViewController {
         
        // let map = Generator.GenerateBoard()
         
-        board = Generator.GenerateBoard2()
-        solver = AStarInstance(board: board)
-        graphicsView.loadMap(board)
-        graphicsView.loadAStar(solver!)
+        mazes.removeAllItems()
+        mazes.addItem(withTitle: "board-1-1")
+        mazes.addItem(withTitle: "board-1-2")
+        mazes.addItem(withTitle: "board-1-3")
+        mazes.addItem(withTitle: "board-1-4")
+        mazes.addItem(withTitle: "board-2-1")
+        mazes.addItem(withTitle: "board-2-2")
+        mazes.addItem(withTitle: "board-2-3")
+        mazes.addItem(withTitle: "board-2-4")
 
         
+        if let file = mazes.selectedItem?.title {
+            solver = AStarInstance(board: Generator.GenerateBoard2(file: file))
+        }
+        graphicsView.loadAStar(solver!)
         // Do any additional setup after loading the view.
     }
 
-    func TakeOneStep(){
-        let path = solver!.step()
-        
-        if(path != nil)
-        {
-            graphicsView.solution = path!
-            timer.invalidate()
+    @IBAction func changeSpeed(_ sender: Any) {
+        if let aStar = solver {
+            if(timer.isValid){
+                timer.invalidate()
+                
+                timer = Timer.scheduledTimer(withTimeInterval: speedSlider.doubleValue / 100, repeats: true, block: { _     in
+                    if(!self.TakeOneStep()){
+                        self.timer.invalidate()
+                    }
+                })
+            }
         }
+        
+    }
+    @IBAction func MazeSelected(_ sender: Any) {
+        
+        timer.invalidate()
+        if let file = mazes.selectedItem?.title {
+            solver?.loadNewBoard(board: Generator.GenerateBoard2(file: file))
+            graphicsView.needsDisplay = true
+        }
+    }
+    
+    func TakeOneStep() -> Bool{
+        
+        let didStep = solver!.step()
+
         graphicsView.needsDisplay = true
+        
+        return didStep
     }
     
     override var representedObject: Any? {
@@ -50,8 +81,12 @@ class ViewController: NSViewController {
 
     @IBAction func ShowAnimation(_ sender: Any) {
         timer.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true, block: { _ in
-            self.TakeOneStep()
+        solver?.reset()
+
+        timer = Timer.scheduledTimer(withTimeInterval: speedSlider.doubleValue / 100, repeats: true, block: { _ in
+            if(!self.TakeOneStep()){
+                self.timer.invalidate()
+            }
         })
         
         //var solution = solver!.execute()
@@ -60,20 +95,25 @@ class ViewController: NSViewController {
     }
     
     @IBAction func NoAnimation(_ sender: Any) {
-        let solution = solver!.execute()
+        timer.invalidate()
         
-        if(!solution.isEmpty){
-            graphicsView.solution = solution
-            graphicsView.needsDisplay = true
+        if let algo = solver{
+            if(algo.execute()){
+                graphicsView.needsDisplay = true
+            }
+            
+            print("Didn't fint result, should not happen")
         }
-
+        else{
+            print("No Algorithm initiated")
+        }
+        
     }
     
     @IBAction func Reset(_ sender: Any) {
-        solver = AStarInstance(board: board)
         
-        graphicsView.loadAStar(solver!)
-        graphicsView.solution = []
+        solver?.reset()
+        
         timer.invalidate()
         graphicsView.needsDisplay = true
     }

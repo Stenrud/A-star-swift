@@ -17,9 +17,10 @@ class AStarInstance{
     var start_node: Node
     var end_node: Node
     
+    
     var open: [Node] = []
     var closed: [Node] = []
-    
+    var solution: [NSPoint] = []
     
     init(board: [[Character]]) {
         self.board = board
@@ -30,10 +31,32 @@ class AStarInstance{
         open.append(start_node)
     }
     
+    func loadNewBoard(board: [[Character]]){
+        
+        open.removeAll()
+        closed.removeAll()
+        solution.removeAll()
+        
+        self.board = board
+        self.start = Generator.FindStart(board)
+        self.end = Generator.FindEnd(board)
+        start_node = Node(nil, start)
+        end_node = Node(nil, end)
+        
+        open.append(start_node)
+    }
     
-    func step() -> [NSPoint]?{
-        if(open.isEmpty){
-            return nil
+    func reset(){
+        open.removeAll()
+        closed.removeAll()
+        solution.removeAll()
+        
+        open.append(start_node)
+    }
+    
+    func step() -> Bool{
+        if(open.isEmpty || !solution.isEmpty){
+            return false
         }
 
         var current_node = open[0]
@@ -58,7 +81,9 @@ class AStarInstance{
                 path.append(current!.point)
                 current = current!.parent
             }
-            return path
+            solution = path
+            
+            return false
         }
         
         var children : [Node] = []
@@ -112,19 +137,14 @@ class AStarInstance{
             }
             
         }
-        return nil
+        return true
     }
     
-    func execute() -> [NSPoint]{
+    func execute() -> Bool{
         
-        while open.count > 0 {
-            let result = step()
-            
-            if(result != nil){
-                return result!
-            }
-        }
-        return []
+        while step() {}
+        
+        return !solution.isEmpty
     }
 
     func convert(_ char: Character) -> Int{

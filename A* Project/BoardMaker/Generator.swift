@@ -52,9 +52,9 @@ class Generator{
 //        return board
 //    }
     
-    static func  GenerateBoard2 () -> [[Character]]{
+    static func  GenerateBoard2 (file: String) -> [[Character]]{
         
-        let path = Bundle.main.path(forResource: "board-2-3", ofType: "txt")
+        let path = Bundle.main.path(forResource: file, ofType: "txt")
         var data = ""
         do{
             data = try String(contentsOfFile: path!)
@@ -76,7 +76,16 @@ class Generator{
             
         }
         board.popLast()
-        return board
+        
+        var arr = [[Character]](repeating: [Character](repeating: "0", count: board.count), count: board[0].count)
+        
+        for (indexX, row) in board.enumerated(){
+            for(indexY, value) in row.enumerated(){
+                arr[indexY][arr[indexY].count - 1 - indexX] = value
+            }
+        }
+        
+        return arr
     }
     
     static func FindStart(_ board : [[Character]]) -> NSPoint{
