@@ -41,7 +41,7 @@ class ViewController: NSViewController {
     }
 
     @IBAction func changeSpeed(_ sender: Any) {
-        if let aStar = solver {
+        
             if(timer.isValid){
                 timer.invalidate()
                 
@@ -51,9 +51,8 @@ class ViewController: NSViewController {
                     }
                 })
             }
-        }
-        
     }
+    
     @IBAction func MazeSelected(_ sender: Any) {
         
         timer.invalidate()
@@ -88,10 +87,6 @@ class ViewController: NSViewController {
                 self.timer.invalidate()
             }
         })
-        
-        //var solution = solver!.execute()
-        //graphicsView.solution = solution
-        //graphicsView.needsDisplay = true
     }
     
     @IBAction func NoAnimation(_ sender: Any) {
@@ -101,8 +96,9 @@ class ViewController: NSViewController {
             if(algo.execute()){
                 graphicsView.needsDisplay = true
             }
-            
-            print("Didn't fint result, should not happen")
+            else{
+                print("Didn't fint result, should not happen")
+            }
         }
         else{
             print("No Algorithm initiated")
