@@ -62,8 +62,7 @@ class AStarInstance{
         var current_node = open[0]
         var current_index = 0
         
-        for i in 0...open.count - 1{
-            let item = open[i]
+        for (i, item) in open.enumerated().reversed(){
             
             if(item.f < current_node.f){
                 current_node = item

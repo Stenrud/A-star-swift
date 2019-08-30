@@ -14,14 +14,19 @@ class GraphicsView : NSView{
     
     var algo: AStarInstance?
     
-    var numberToColor = [
+    let green = NSColor.green
+    
+    let blue = NSColor.blue
+    let gray = NSColor.gray
+    
+    let numberToColor = [
         "#" : NSColor.black,
         "A" : NSColor.yellow,
         "B" : NSColor.yellow,
         "." : NSColor.white,
         "r" : NSColor.brown,
         "g" : NSColor.green,
-        "f" : NSColor.orange,
+        "f" : NSColor(red: 1.5*34 / 255, green: 1.5*139 / 255, blue: 1.5*34 / 255, alpha: 1),
         "m" : NSColor.gray,
         "w" : NSColor.blue
     ]
@@ -59,23 +64,24 @@ class GraphicsView : NSView{
             NSRect(x: offsetX + x * pixelSize + pixelOffset / 2, y: offsetY + y * pixelSize + pixelOffset / 2, width: pixelSize - pixelOffset, height: pixelSize - pixelOffset).fill()
         }
         
-        NSColor.green.setFill()
-        for point in aStar.open{
-            //NSRect(x: offsetX + (point.point.x * pixelSize) + 5, y: offsetY + (point.point.y * pixelSize) + 5, width: pixelSize - 10, height: pixelSize - 10).fill()
-            drawRect(x: point.point.x, y: point.point.y, size: 0.5)
-        }
         
         NSColor.red.setFill()
         for point in aStar.closed{
-            //NSRect(x: offsetX + (point.point.x * pixelSize) + 5, y: offsetY + (point.point.y * pixelSize) + 5, width: pixelSize - 10, height: pixelSize - 10).fill()
             drawRect(x: point.point.x, y: point.point.y, size: 0.5)
+        }
+        
+        for point in aStar.open{
+            drawRect(x: point.point.x, y: point.point.y, size: 0.5)
+        }
+        
+        NSColor.green.setFill()
+        for point in aStar.open{
+            drawRect(x: point.point.x, y: point.point.y, size: 0.3)
         }
         
         NSColor.yellow.setFill()
         for point in aStar.solution{
-            //NSRect(x: offsetX + point.x * pixelSize, y: offsetY + point.y * pixelSize, width: pixelSize, height: pixelSize).fill()
-            
-            drawRect(x: point.x, y: point.y, size: 0.5)
+            drawRect(x: point.x, y: point.y, size: 0.3)
         }
         
         
