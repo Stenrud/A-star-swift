@@ -9,52 +9,14 @@
 import Cocoa
 
 
-class OtherAlgorithm: IAlgorithm {
-    
-    var board:[[Character]]
-    var start: NSPoint
-    var end: NSPoint
-    var start_node: Node
-    var end_node: Node
+class Dijkstra: SearchAlgorithm {
     
     
-    var open: [Node] = []
-    var closed: [Node] = []
-    var solution: [NSPoint] = []
-    
-    init(board: [[Character]]) {
-        self.board = board
-        self.start = Generator.FindStart(board)
-        self.end = Generator.FindEnd(board)
-        start_node = Node(nil, start)
-        end_node = Node(nil, end)
-        open.append(start_node)
+    override init(board: [[Character]]) {
+    super.init(board: board)
     }
     
-    func loadNewBoard(board: [[Character]]){
-        
-        open.removeAll()
-        closed.removeAll()
-        solution.removeAll()
-        
-        self.board = board
-        self.start = Generator.FindStart(board)
-        self.end = Generator.FindEnd(board)
-        start_node = Node(nil, start)
-        end_node = Node(nil, end)
-        
-        open.append(start_node)
-    }
-    
-    func reset(){
-        open.removeAll()
-        closed.removeAll()
-        solution.removeAll()
-        
-        open.append(start_node)
-    }
-    
-    func step() -> Bool{
+    override func step() -> Bool{
         if(open.isEmpty || !solution.isEmpty){
             return false
         }
@@ -62,9 +24,8 @@ class OtherAlgorithm: IAlgorithm {
         var current_node = open[0]
         var current_index = 0
         
-        for (i, item) in open.enumerated().reversed(){
-            
-            if(item.f < current_node.f){
+        for (i, item) in open.enumerated(){
+            if(item.g < current_node.g){
                 current_node = item
                 current_index = i
             }
@@ -112,8 +73,6 @@ class OtherAlgorithm: IAlgorithm {
             
             child.g = current_node.g + convert(board[Int(child.point.x)][Int(child.point.y)])
             
-            child.f = child.g
-            
             for (i, open_cell) in open.enumerated(){
                 if(open_cell.point == child.point){
                     if(open_cell.g > child.g){
@@ -137,33 +96,10 @@ class OtherAlgorithm: IAlgorithm {
         return true
     }
     
-    func execute() -> Bool{
+    override func execute() -> Bool{
         
         while step() {}
         
         return !solution.isEmpty
-    }
-    
-    func convert(_ char: Character) -> Int{
-        switch char {
-        case "w":
-            return 100
-        case "m":
-            return 50
-        case "f":
-            return 10
-        case "g":
-            return 5
-        case "r":
-            return 1
-        case "B":
-            return 0
-        case "A":
-            return 0
-        case "#":
-            return -1
-        default:
-            return 0
-        }
     }
 }

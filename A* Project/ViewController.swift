@@ -10,8 +10,8 @@ import Cocoa
 
 class ViewController: NSViewController {
 
-    let AStar = String(describing: AStarInstance.self)
-    let Other = String(describing: OtherAlgorithm.self)
+    let aStar = String(describing: AStar.self)
+    let dijkstra = String(describing: Dijkstra.self)
     
     @IBOutlet weak var graphicsView: GraphicsView!
     @IBOutlet weak var mazes: NSPopUpButtonCell!
@@ -37,11 +37,11 @@ class ViewController: NSViewController {
         mazes.addItem(withTitle: "board-2-4")
 
         algorithms.removeAllItems()
-        algorithms.addItem(withTitle: AStar)
-        algorithms.addItem(withTitle: Other)
+        algorithms.addItem(withTitle: aStar)
+        algorithms.addItem(withTitle: dijkstra)
        
         if let file = mazes.selectedItem?.title {
-            solver = AStarInstance(board: Generator.GenerateBoard2(file: file))
+            solver = AStar(board: Generator.GenerateBoard2(file: file))
         }
         graphicsView.loadAlgorithm(solver!)
         // Do any additional setup after loading the view.
@@ -52,7 +52,7 @@ class ViewController: NSViewController {
             if(timer.isValid){
                 timer.invalidate()
                 
-                timer = Timer.scheduledTimer(withTimeInterval: speedSlider.doubleValue / 100, repeats: true, block: { _     in
+                timer = Timer.scheduledTimer(withTimeInterval: speedSlider.doubleValue / 100, repeats: true, block: {_ in
                     if(!self.TakeOneStep()){
                         self.timer.invalidate()
                     }
@@ -76,15 +76,15 @@ class ViewController: NSViewController {
         }
         
         
-        if( algo is AStarInstance && algorithms.titleOfSelectedItem == Other){
+        if( algo is AStar && algorithms.titleOfSelectedItem == dijkstra){
             timer.invalidate()
-            solver = OtherAlgorithm(board: algo.board)
+            solver = Dijkstra(board: algo.board)
             graphicsView.loadAlgorithm(solver!)
             graphicsView.needsDisplay = true
         }
-        else if( algo is OtherAlgorithm && algorithms.titleOfSelectedItem == AStar){
+        else if( algo is Dijkstra && algorithms.titleOfSelectedItem == aStar){
             timer.invalidate()
-            solver = AStarInstance(board: algo.board)
+            solver = AStar(board: algo.board)
             graphicsView.loadAlgorithm(solver!)
             graphicsView.needsDisplay = true
         }

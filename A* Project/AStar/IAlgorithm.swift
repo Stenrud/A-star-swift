@@ -9,10 +9,10 @@
 import Cocoa
 
 protocol IAlgorithm {
-    var board:[[Character]] {get}
-    var open: [Node] {get}
-    var closed: [Node] {get}
-    var solution: [NSPoint] {get}
+    var board:[[Character]] { get }
+    var open: [Node] { get }
+    var closed: [Node] { get }
+    var solution: [NSPoint] { get }
     
     func loadNewBoard(board: [[Character]])
     func reset()
