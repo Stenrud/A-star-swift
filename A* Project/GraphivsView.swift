@@ -12,7 +12,7 @@ var number = 1
 
 class GraphicsView : NSView{
     
-    var algo: AStarInstance?
+    var algo: IAlgorithm?
     
     let green = NSColor.green
     
@@ -31,7 +31,7 @@ class GraphicsView : NSView{
         "w" : NSColor.blue
     ]
     
-    func loadAStar(_ algo: AStarInstance){
+    func loadAlgorithm(_ algo: IAlgorithm){
         self.algo = algo;
     }
     
@@ -40,6 +40,7 @@ class GraphicsView : NSView{
         guard let aStar = algo else{
             return
         }
+        
         let map = aStar.board
         
         let pixelSize = min(bounds.width / CGFloat(map.count), bounds.height / CGFloat(map[0].count))

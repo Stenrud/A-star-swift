@@ -10,11 +10,15 @@ import Cocoa
 
 class ViewController: NSViewController {
 
+    let AStar = String(describing: AStarInstance.self)
+    let Other = String(describing: OtherAlgorithm.self)
+    
     @IBOutlet weak var graphicsView: GraphicsView!
     @IBOutlet weak var mazes: NSPopUpButtonCell!
+    @IBOutlet weak var algorithms: NSPopUpButtonCell!
     @IBOutlet weak var speedSlider: NSSliderCell!
     
-    var solver: AStarInstance?
+    var solver: IAlgorithm?
     var timer = Timer()
     
     override func viewDidLoad() {
@@ -32,11 +36,14 @@ class ViewController: NSViewController {
         mazes.addItem(withTitle: "board-2-3")
         mazes.addItem(withTitle: "board-2-4")
 
-        
+        algorithms.removeAllItems()
+        algorithms.addItem(withTitle: AStar)
+        algorithms.addItem(withTitle: Other)
+       
         if let file = mazes.selectedItem?.title {
             solver = AStarInstance(board: Generator.GenerateBoard2(file: file))
         }
-        graphicsView.loadAStar(solver!)
+        graphicsView.loadAlgorithm(solver!)
         // Do any additional setup after loading the view.
     }
 
@@ -58,6 +65,27 @@ class ViewController: NSViewController {
         timer.invalidate()
         if let file = mazes.selectedItem?.title {
             solver?.loadNewBoard(board: Generator.GenerateBoard2(file: file))
+            graphicsView.needsDisplay = true
+        }
+    }
+    
+    @IBAction func AlgorithmSelected(_ sender: Any) {
+
+        guard let algo = graphicsView.algo else{
+            return
+        }
+        
+        
+        if( algo is AStarInstance && algorithms.titleOfSelectedItem == Other){
+            timer.invalidate()
+            solver = OtherAlgorithm(board: algo.board)
+            graphicsView.loadAlgorithm(solver!)
+            graphicsView.needsDisplay = true
+        }
+        else if( algo is OtherAlgorithm && algorithms.titleOfSelectedItem == AStar){
+            timer.invalidate()
+            solver = AStarInstance(board: algo.board)
+            graphicsView.loadAlgorithm(solver!)
             graphicsView.needsDisplay = true
         }
     }

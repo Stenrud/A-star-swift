@@ -9,7 +9,7 @@
 import Cocoa
 
 
-class AStarInstance: IAlgorithm{
+class OtherAlgorithm: IAlgorithm {
     
     var board:[[Character]]
     var start: NSPoint
@@ -58,7 +58,7 @@ class AStarInstance: IAlgorithm{
         if(open.isEmpty || !solution.isEmpty){
             return false
         }
-
+        
         var current_node = open[0]
         var current_index = 0
         
@@ -86,7 +86,7 @@ class AStarInstance: IAlgorithm{
         }
         
         var children : [Node] = []
-//        for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1)]{
+        //        for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1)]{
         for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0)]{
             let nodeX = Int(current_node.point.x) + new_position.0
             let nodeY = Int(current_node.point.y) + new_position.1
@@ -111,10 +111,8 @@ class AStarInstance: IAlgorithm{
             }
             
             child.g = current_node.g + convert(board[Int(child.point.x)][Int(child.point.y)])
-            let a = abs(child.point.x - end_node.point.x)
-            let b = abs(child.point.y - end_node.point.y)
-            child.h =  Int(a + b)
-            child.f = child.g + child.h
+            
+            child.f = child.g
             
             for (i, open_cell) in open.enumerated(){
                 if(open_cell.point == child.point){
@@ -145,7 +143,7 @@ class AStarInstance: IAlgorithm{
         
         return !solution.isEmpty
     }
-
+    
     func convert(_ char: Character) -> Int{
         switch char {
         case "w":
