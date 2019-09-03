@@ -12,6 +12,7 @@ class ViewController: NSViewController {
 
     let aStar = String(describing: AStar.self)
     let dijkstra = String(describing: Dijkstra.self)
+    let bfs = String(describing: Bfs.self)
     
     @IBOutlet weak var graphicsView: GraphicsView!
     @IBOutlet weak var mazes: NSPopUpButtonCell!
@@ -39,6 +40,7 @@ class ViewController: NSViewController {
         algorithms.removeAllItems()
         algorithms.addItem(withTitle: aStar)
         algorithms.addItem(withTitle: dijkstra)
+        algorithms.addItem(withTitle: bfs)
        
         if let file = mazes.selectedItem?.title {
             solver = AStar(board: Generator.GenerateBoard2(file: file))
@@ -76,15 +78,21 @@ class ViewController: NSViewController {
         }
         
         
-        if( algo is AStar && algorithms.titleOfSelectedItem == dijkstra){
+        if(algorithms.titleOfSelectedItem == dijkstra){
             timer.invalidate()
             solver = Dijkstra(board: algo.board)
             graphicsView.loadAlgorithm(solver!)
             graphicsView.needsDisplay = true
         }
-        else if( algo is Dijkstra && algorithms.titleOfSelectedItem == aStar){
+        else if(algorithms.titleOfSelectedItem == aStar){
             timer.invalidate()
             solver = AStar(board: algo.board)
+            graphicsView.loadAlgorithm(solver!)
+            graphicsView.needsDisplay = true
+        }
+        else if(algorithms.titleOfSelectedItem == bfs){
+            timer.invalidate()
+            solver = Bfs(board: algo.board)
             graphicsView.loadAlgorithm(solver!)
             graphicsView.needsDisplay = true
         }
