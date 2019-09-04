@@ -18,10 +18,26 @@ class ViewController: NSViewController {
     @IBOutlet weak var mazes: NSPopUpButtonCell!
     @IBOutlet weak var algorithms: NSPopUpButtonCell!
     @IBOutlet weak var speedSlider: NSSliderCell!
+    @IBOutlet weak var showOnlySolutionCheckBox: NSButton!
+    
     
     var solver: IAlgorithm?
     var timer = Timer()
     
+    @IBAction func onShowOnlySolutionChanged(_ sender: Any) {
+        switch(showOnlySolutionCheckBox.state){
+        case .off:
+            graphicsView.showOnlySolution = false
+            break
+        case .on:
+            graphicsView.showOnlySolution = true
+            break
+        default:
+            break
+        }
+        
+        graphicsView.needsDisplay = true
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -68,6 +84,7 @@ class ViewController: NSViewController {
         if let file = mazes.selectedItem?.title {
             solver?.loadNewBoard(board: Generator.GenerateBoard2(file: file))
             graphicsView.needsDisplay = true
+            graphicsView.needsResizing = true
         }
     }
     
@@ -82,19 +99,16 @@ class ViewController: NSViewController {
             timer.invalidate()
             solver = Dijkstra(board: algo.board)
             graphicsView.loadAlgorithm(solver!)
-            graphicsView.needsDisplay = true
         }
         else if(algorithms.titleOfSelectedItem == aStar){
             timer.invalidate()
             solver = AStar(board: algo.board)
             graphicsView.loadAlgorithm(solver!)
-            graphicsView.needsDisplay = true
         }
         else if(algorithms.titleOfSelectedItem == bfs){
             timer.invalidate()
             solver = Bfs(board: algo.board)
             graphicsView.loadAlgorithm(solver!)
-            graphicsView.needsDisplay = true
         }
     }
     

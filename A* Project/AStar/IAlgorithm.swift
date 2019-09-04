@@ -9,7 +9,7 @@
 import Cocoa
 
 protocol IAlgorithm {
-    var board:[[Character]] { get }
+    var board:[[Character]] { get set}
     var open: [Node] { get }
     var closed: [Node] { get }
     var solution: [NSPoint] { get }
