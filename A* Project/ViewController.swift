@@ -41,28 +41,19 @@ class ViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-       // let map = Generator.GenerateBoard()
-        
         mazes.removeAllItems()
-        mazes.addItem(withTitle: "board-1-1")
-        mazes.addItem(withTitle: "board-1-2")
-        mazes.addItem(withTitle: "board-1-3")
-        mazes.addItem(withTitle: "board-1-4")
-        mazes.addItem(withTitle: "board-2-1")
-        mazes.addItem(withTitle: "board-2-2")
-        mazes.addItem(withTitle: "board-2-3")
-        mazes.addItem(withTitle: "board-2-4")
-
+        mazes.addItems(withTitles: Generator.GetFiles())
+        
         algorithms.removeAllItems()
         algorithms.addItem(withTitle: aStar)
         algorithms.addItem(withTitle: dijkstra)
         algorithms.addItem(withTitle: bfs)
        
         if let file = mazes.selectedItem?.title {
-            solver = AStar(board: Generator.GenerateBoard2(file: file))
+            solver = AStar(board: Generator.GenerateBoardFromCsv(task: file))
         }
+        
         graphicsView.loadAlgorithm(solver!)
-        // Do any additional setup after loading the view.
     }
 
     @IBAction func changeSpeed(_ sender: Any) {
@@ -70,19 +61,15 @@ class ViewController: NSViewController {
             if(timer.isValid){
                 timer.invalidate()
                 
-                timer = Timer.scheduledTimer(withTimeInterval: speedSlider.doubleValue / 100, repeats: true, block: {_ in
-                    if(!self.TakeOneStep()){
-                        self.timer.invalidate()
-                    }
-                })
+                initiateTimer()
             }
     }
     
     @IBAction func MazeSelected(_ sender: Any) {
         
         timer.invalidate()
-        if let file = mazes.selectedItem?.title {
-            solver?.loadNewBoard(board: Generator.GenerateBoard2(file: file))
+        if let task = mazes.selectedItem?.title {
+            solver?.loadNewBoard(maze: Generator.GenerateBoardFromCsv(task: task))
             graphicsView.needsDisplay = true
             graphicsView.needsResizing = true
         }
@@ -97,17 +84,17 @@ class ViewController: NSViewController {
         
         if(algorithms.titleOfSelectedItem == dijkstra){
             timer.invalidate()
-            solver = Dijkstra(board: algo.board)
+            solver = Dijkstra(board: algo.maze)
             graphicsView.loadAlgorithm(solver!)
         }
         else if(algorithms.titleOfSelectedItem == aStar){
             timer.invalidate()
-            solver = AStar(board: algo.board)
+            solver = AStar(board: algo.maze)
             graphicsView.loadAlgorithm(solver!)
         }
         else if(algorithms.titleOfSelectedItem == bfs){
             timer.invalidate()
-            solver = Bfs(board: algo.board)
+            solver = Bfs(board: algo.maze)
             graphicsView.loadAlgorithm(solver!)
         }
     }
@@ -132,7 +119,11 @@ class ViewController: NSViewController {
         timer.invalidate()
         solver?.reset()
 
-        timer = Timer.scheduledTimer(withTimeInterval: speedSlider.doubleValue / 100, repeats: true, block: { _ in
+        initiateTimer()
+    }
+    
+    func initiateTimer(){
+        timer = Timer.scheduledTimer(withTimeInterval: (50 - speedSlider.doubleValue) / 100, repeats: true, block: { _ in
             if(!self.TakeOneStep()){
                 self.timer.invalidate()
             }

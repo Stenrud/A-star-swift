@@ -12,8 +12,8 @@ import Cocoa
 class Dijkstra: SearchAlgorithm {
     
     
-    override init(board: [[Character]]) {
-    super.init(board: board)
+    override init(board: Maze) {
+        super.init(board: board)
     }
     
     override func step() -> Bool{
@@ -34,7 +34,7 @@ class Dijkstra: SearchAlgorithm {
         open.remove(at: current_index)
         closed.append(current_node)
         
-        if (current_node.point == end_node.point){
+        if (current_node.point == maze.end_pos){
             var path: [NSPoint] = []
             var current:Node? = current_node
             while (current != nil){
@@ -52,11 +52,11 @@ class Dijkstra: SearchAlgorithm {
             let nodeX = Int(current_node.point.x) + new_position.0
             let nodeY = Int(current_node.point.y) + new_position.1
             
-            if(nodeX > board.count - 1 || nodeX < 0 || nodeY > board[nodeX].count - 1 || nodeY < 0){
+            if(nodeX > maze.board.count - 1 || nodeX < 0 || nodeY > maze.board[nodeX].count - 1 || nodeY < 0){
                 continue
             }
             
-            if(board[nodeX][nodeY] == "#"){
+            if(maze.board[nodeX][nodeY] == -1){
                 continue
             }
             
@@ -71,7 +71,7 @@ class Dijkstra: SearchAlgorithm {
                 continue
             }
             
-            child.g = current_node.g + convert(board[Int(child.point.x)][Int(child.point.y)])
+            child.g = current_node.g + maze.board[Int(child.point.x)][Int(child.point.y)]
             
             for (i, open_cell) in open.enumerated(){
                 if(open_cell.point == child.point){

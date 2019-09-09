@@ -751,7 +751,7 @@
                                 <constraints>
                                     <constraint firstAttribute="width" constant="154" id="hUu-7V-TGX"/>
                                 </constraints>
-                                <sliderCell key="cell" userInterfaceLayoutDirection="rightToLeft" alignment="left" minValue="1" maxValue="50" doubleValue="25" tickMarkPosition="above" sliderType="linear" id="g8T-MC-aXf">
+                                <sliderCell key="cell" alignment="left" maxValue="50" doubleValue="25" tickMarkPosition="above" sliderType="linear" id="g8T-MC-aXf">
                                     <connections>
                                         <action selector="changeSpeed:" target="XfG-lQ-9wD" id="nq2-qa-pha"/>
                                     </connections>

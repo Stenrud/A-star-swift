@@ -26,17 +26,34 @@ class GraphicsView : NSView{
     let blue = NSColor.blue
     let gray = NSColor.gray
     
+    let startColor = NSColor(red: 1, green: 0, blue: 1, alpha: 1)
+    let endColor = NSColor(red: 0, green: 0.5, blue: 1, alpha: 1)
     
+//    let numberToColor = [
+//        "#" : NSColor.black,
+//        "A" : NSColor.yellow,
+//        "B" : NSColor.yellow,
+//        "." : NSColor.white,
+//        "r" : NSColor.brown,
+//        "g" : NSColor.green,
+//        "f" : NSColor(red: 1.5*34 / 255, green: 1.5*139 / 255, blue: 1.5*34 / 255, alpha: 1),
+//        "m" : NSColor.gray,
+//        "w" : NSColor.blue
+//    ]
     let numberToColor = [
-        "#" : NSColor.black,
-        "A" : NSColor.yellow,
-        "B" : NSColor.yellow,
-        "." : NSColor.white,
-        "r" : NSColor.brown,
-        "g" : NSColor.green,
-        "f" : NSColor(red: 1.5*34 / 255, green: 1.5*139 / 255, blue: 1.5*34 / 255, alpha: 1),
-        "m" : NSColor.gray,
-        "w" : NSColor.blue
+        -1 : NSColor.red,
+//        "A" : NSColor.yellow,
+//        "B" : NSColor.yellow,
+        1 : NSColor(red: 0.843, green: 0.843, blue: 0.843, alpha: 1),
+        2 : NSColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1),
+        3 : NSColor(red: 0.6, green: 0.6, blue: 0.6, alpha: 1),
+        4 : NSColor(red: 0.4, green: 0.4, blue: 0.4, alpha: 1),
+        5 : NSColor(red: 0.2, green: 0.2, blue: 0.2, alpha: 1),
+//        "r" : NSColor.brown,
+//        "g" : NSColor.green,
+//        "f" : NSColor(red: 1.5*34 / 255, green: 1.5*139 / 255, blue: 1.5*34 / 255, alpha: 1),
+//        "m" : NSColor.gray,
+//        "w" : NSColor.blue
     ]
     
     override func viewWillStartLiveResize() {
@@ -76,11 +93,11 @@ class GraphicsView : NSView{
         let x = Int((CGFloat(point.x) - rect.minX) / size)
         let y = Int((CGFloat(point.y) - rect.minY) / size)
         
-        guard var algorithm = algo else{
+        guard let algorithm = algo else{
             return
         }
         
-        algorithm.board[x][y] = "#"
+        algorithm.set(x, y, -1)
         needsDisplay = true
     }
     
@@ -90,13 +107,13 @@ class GraphicsView : NSView{
             fatalError("An algorithm should be loaded")
         }
         
-        let map = aStar.board
+        let board = aStar.maze
         
         if (isResizing || needsResizing || pixelSize == nil){
-            pixelSize = min(bounds.width / CGFloat(map.count), bounds.height / CGFloat(map[0].count))
+            pixelSize = min(bounds.width / CGFloat(board.width), bounds.height / CGFloat(board.height))
             
-            let boardWidth = CGFloat(map.count) * pixelSize!
-            let boardHeight = CGFloat(map[0].count) * pixelSize!
+            let boardWidth = CGFloat(board.width) * pixelSize!
+            let boardHeight = CGFloat(board.height) * pixelSize!
             
             let offsetX = bounds.width / 2.0 - boardWidth / 2
             let offsetY = bounds.height / 2.0 - boardHeight / 2
@@ -117,15 +134,20 @@ class GraphicsView : NSView{
             NSRect(x: boardBounds.minX + x * pixelSize + pixelOffset / 2, y: boardBounds.minY + y * pixelSize + pixelOffset / 2, width: pixelSize - pixelOffset, height: pixelSize - pixelOffset).fill()
         }
         
-        for x in 0...map.count - 1{
+        for x in 0...board.width - 1{
             
-            for y in 0...map[x].count - 1{
+            for y in 0...board.height - 1{
                 
-                numberToColor[String(map[x][y])]?.setFill()
-                drawRect(x: CGFloat(x), y: CGFloat(y), size: 0.95)
+                numberToColor[board.board[x][y]]?.setFill()
+                drawRect(x: CGFloat(x), y: CGFloat(y), size: 1.1)
                 
             }
         }
+        
+        startColor.setFill()
+        drawRect(x: board.start_pos.x, y: board.start_pos.y, size: 1)
+        endColor.setFill()
+        drawRect(x: board.end_pos.x, y: board.end_pos.y, size: 1)
         
         if(algo?.solution.count == 0 || !showOnlySolution){
             NSColor.red.setFill()

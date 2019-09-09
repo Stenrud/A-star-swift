@@ -1,17 +1,17 @@
 //
-//  Bfs.swift
+//  AStartInstance.swift
 //  A* Project
 //
-//  Created by Truls Stenrud on 03/09/2019.
+//  Created by Truls Stenrud on 27/08/2019.
 //  Copyright © 2019 Truls Stenrud. All rights reserved.
 //
 
 import Cocoa
 
 
-class Bfs: SearchAlgorithm{
+class AStar: SearchAlgorithm{
     
-    override init(board: [[Character]]) {
+    override init(board: Maze) {
         super.init(board: board)
     }
     
@@ -19,36 +19,45 @@ class Bfs: SearchAlgorithm{
         if(open.isEmpty || !solution.isEmpty){
             return false
         }
+
+        var current_node = open[0]
+        var current_index = 0
         
-        let current_node = open[0]
-        let current_index = 0
+        for (i, item) in open.enumerated().reversed(){
+            
+            if(item.f < current_node.f){
+                current_node = item
+                current_index = i
+            }
+        }
         
         open.remove(at: current_index)
         closed.append(current_node)
         
-        if (current_node.point == end_node.point){
+        if (current_node.point == maze.end_pos){
             var path: [NSPoint] = []
             var current:Node? = current_node
             while (current != nil){
                 path.append(current!.point)
                 current = current!.parent
             }
+            
             solution = path
             
             return false
         }
         
         var children : [Node] = []
-        //        for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1)]{
+//        for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1)]{
         for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0)]{
             let nodeX = Int(current_node.point.x) + new_position.0
             let nodeY = Int(current_node.point.y) + new_position.1
             
-            if(nodeX > board.count - 1 || nodeX < 0 || nodeY > board[nodeX].count - 1 || nodeY < 0){
+            if(nodeX > maze.width - 1 || nodeX < 0 || nodeY > maze.height - 1 || nodeY < 0){
                 continue
             }
             
-            if(board[nodeX][nodeY] == "#"){
+            if(maze.board[nodeX][nodeY] == -1){
                 continue
             }
             
@@ -63,9 +72,9 @@ class Bfs: SearchAlgorithm{
                 continue
             }
             
-            child.g = current_node.g + convert(board[Int(child.point.x)][Int(child.point.y)])
-            let a = abs(child.point.x - end_node.point.x)
-            let b = abs(child.point.y - end_node.point.y)
+            child.g = current_node.g + maze.board[Int(child.point.x)][Int(child.point.y)]
+            let a = abs(child.point.x - maze.end_pos.x)
+            let b = abs(child.point.y - maze.end_pos.y)
             child.h =  Int(a + b)
             child.f = child.g + child.h
             
@@ -99,4 +108,3 @@ class Bfs: SearchAlgorithm{
         return !solution.isEmpty
     }
 }
-
