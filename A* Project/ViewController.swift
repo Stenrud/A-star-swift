@@ -22,6 +22,8 @@ class ViewController: NSViewController {
     var solver: IAlgorithm?
     var timer = Timer()
     
+    // THis is called when the user checks or unchecs the button for displaying only the solutionpath, and not
+    // the open/closed nodes
     @IBAction func onShowOnlySolutionChanged(_ sender: Any) {
         guard let button = sender as? NSButton else{
             return
@@ -41,6 +43,7 @@ class ViewController: NSViewController {
         graphicsView.needsDisplay = true
     }
     
+    // Is called when the view is loaded and I can comunicate with the view elements
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -59,6 +62,7 @@ class ViewController: NSViewController {
         graphicsView.loadAlgorithm(solver!)
     }
 
+    // is called when the user changes the speed using the slider
     @IBAction func changeSpeed(_ sender: Any) {
             if(timer.isValid){
                 timer.invalidate()
@@ -71,6 +75,7 @@ class ViewController: NSViewController {
     
     @IBAction func taskSelected(_ sender: Any) {
         
+        // stop the timer in case its running
         timer.invalidate()
         if let task = mazes.selectedItem?.title {
             solver?.loadNewBoard(maze: Generator.GenerateBoardFromCsv(task: task))
@@ -79,6 +84,7 @@ class ViewController: NSViewController {
         }
     }
 
+    // lets the user choose algorithm
     @IBAction func AlgorithmSelected(_ sender: Any) {
 
         guard let algo = graphicsView.algo else{
@@ -102,6 +108,8 @@ class ViewController: NSViewController {
         }
     }
     
+    // takes one step in the search algorithm.
+    // It's used by the timer to create the animation
     func TakeOneStep() -> Bool{
         
         let didStep = solver!.step()
@@ -111,13 +119,20 @@ class ViewController: NSViewController {
         return didStep
     }
 
+    // starts the animation
     @IBAction func StartAnimation(_ sender: Any) {
+        // stops old timer if it runs
         timer.invalidate()
+        
+        // reset the algorithm
         solver?.reset()
         
+        // start new timer
         initiateTimer()
     }
     
+    // creates a timer that creates the animation,
+    // for each step it takes one step with the search algorithm
     func initiateTimer(){
         timer = Timer.scheduledTimer(withTimeInterval: (50 - speedSlider.doubleValue) / 100, repeats: true, block: { _ in
             if(!self.TakeOneStep()){
@@ -126,8 +141,10 @@ class ViewController: NSViewController {
         })
     }
     
+    // FInds the solution without animating it
     @IBAction func NoAnimation(_ sender: Any) {
         
+        // stops the timer if its already running
         timer.invalidate()
         
         if let algo = solver{
@@ -144,6 +161,7 @@ class ViewController: NSViewController {
         
     }
     
+    // resets the algorithm
     @IBAction func Reset(_ sender: Any) {
         solver?.reset()
         

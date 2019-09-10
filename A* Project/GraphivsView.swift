@@ -14,17 +14,27 @@ class GraphicsView : NSView{
     
     var algo: IAlgorithm?
     
+    // the calculated centered position for the board
     var boardBounds : NSRect?
+    
+    // the sice of each cell on the map
     var pixelSize : CGFloat?
     
+    // keeps track wether the window is being resized or not
     var isResizing = false
+    
+    // should be set to true whenever the window changed size or a new board is loaded
+    // so that the boardounds can be recalculated
     var needsResizing = true
     
+    // chooses wether the solution path should be rendered alone or with the open/closed nodes
     var showOnlySolution = true
     
+    // the colors of the start and end nodes
     let startColor = NSColor(red: 1, green: 0, blue: 1, alpha: 1)
     let endColor = NSColor(red: 0, green: 0.5, blue: 1, alpha: 1)
     
+    // the colors used to render the map, based on their move cost
     let numberToColor = [
         -1 : NSColor.red,
         1 : NSColor(red: 0.843, green: 0.843, blue: 0.843, alpha: 1),
@@ -34,29 +44,34 @@ class GraphicsView : NSView{
         5 : NSColor(red: 0.2, green: 0.2, blue: 0.2, alpha: 1),
     ]
     
+    // is called when user starts resizing the window
     override func viewWillStartLiveResize() {
         isResizing = true
     }
     
+    // is called when user ends resizing the window
     override func viewDidEndLiveResize() {
         isResizing = false
     }
     
-    
+    // is used to change pathfindig algorithm
     func loadAlgorithm(_ algo: IAlgorithm){
         self.algo = algo;
         needsResizing = true
         self.needsDisplay = true
     }
     
+    // is called when the user clicks the board
     override func mouseDown(with event: NSEvent) {
         drawDot(point: event.locationInWindow)
     }
     
+    // is called when the user draggs on the board
     override func mouseDragged(with event: NSEvent) {
         drawDot(point: event.locationInWindow)
     }
     
+    // draws one dot on the board, currently only drawing obstacles
     func drawDot(point : NSPoint){
         guard let rect = boardBounds, let size = pixelSize else{
             return
@@ -79,6 +94,8 @@ class GraphicsView : NSView{
         needsDisplay = true
     }
     
+    
+    // renders the board/map
     override func draw(_ dirtyRect: NSRect) {
         
         guard let aStar = algo else{
@@ -87,6 +104,8 @@ class GraphicsView : NSView{
         
         let board = aStar.maze
         
+        // calculates new bounds for the board if needed
+        // bounds should always be centered in the window
         if (isResizing || needsResizing || pixelSize == nil){
             pixelSize = min(bounds.width / CGFloat(board.width), bounds.height / CGFloat(board.height))
             
@@ -101,10 +120,12 @@ class GraphicsView : NSView{
             needsResizing = false
         }
         
+        // pixelSize and boardBounds in optionals
         guard let pixelSize = pixelSize, let boardBounds = boardBounds else{
             fatalError()
         }
         
+        // converts and draws map coordinates to pixel coordinates
         func drawRect(x: CGFloat, y:CGFloat, size: CGFloat){
             
             let pixelOffset = pixelSize * (1 - size)
@@ -166,7 +187,6 @@ class GraphicsView : NSView{
                 NSRect(x: x, y: y, width: width, height: height).fill()
             }
             
-            //drawRect(x: point.x, y: point.y, size: 0.3)
             lastPoint = point//drawRect(x: point.x, y: point.y, size: 0.3)
         }
     }
