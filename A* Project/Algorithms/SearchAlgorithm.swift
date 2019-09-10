@@ -9,11 +9,11 @@
 import Cocoa
 
 class SearchAlgorithm: IAlgorithm {
+    
     func set(_ x: Int, _ y : Int, _ newValue : Int) {
         maze.board[x][y] = newValue
         solution.removeAll()
     }
-    
     
     var maze : Maze
     var start_node : Node

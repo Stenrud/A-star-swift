@@ -18,14 +18,16 @@ class ViewController: NSViewController {
     @IBOutlet weak var mazes: NSPopUpButtonCell!
     @IBOutlet weak var algorithms: NSPopUpButtonCell!
     @IBOutlet weak var speedSlider: NSSliderCell!
-    @IBOutlet weak var showOnlySolutionCheckBox: NSButton!
-    
     
     var solver: IAlgorithm?
     var timer = Timer()
     
     @IBAction func onShowOnlySolutionChanged(_ sender: Any) {
-        switch(showOnlySolutionCheckBox.state){
+        guard let button = sender as? NSButton else{
+            return
+        }
+        
+        switch(button.state){
         case .off:
             graphicsView.showOnlySolution = false
             break
@@ -38,6 +40,7 @@ class ViewController: NSViewController {
         
         graphicsView.needsDisplay = true
     }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -57,7 +60,6 @@ class ViewController: NSViewController {
     }
 
     @IBAction func changeSpeed(_ sender: Any) {
-        
             if(timer.isValid){
                 timer.invalidate()
                 
@@ -65,7 +67,9 @@ class ViewController: NSViewController {
             }
     }
     
-    @IBAction func MazeSelected(_ sender: Any) {
+    
+    
+    @IBAction func taskSelected(_ sender: Any) {
         
         timer.invalidate()
         if let task = mazes.selectedItem?.title {
@@ -74,13 +78,12 @@ class ViewController: NSViewController {
             graphicsView.needsResizing = true
         }
     }
-    
+
     @IBAction func AlgorithmSelected(_ sender: Any) {
 
         guard let algo = graphicsView.algo else{
             return
         }
-        
         
         if(algorithms.titleOfSelectedItem == dijkstra){
             timer.invalidate()
@@ -107,18 +110,11 @@ class ViewController: NSViewController {
         
         return didStep
     }
-    
-    override var representedObject: Any? {
-        didSet {
-        // Update the view, if already loaded.
-        
-        }
-    }
 
-    @IBAction func ShowAnimation(_ sender: Any) {
+    @IBAction func StartAnimation(_ sender: Any) {
         timer.invalidate()
         solver?.reset()
-
+        
         initiateTimer()
     }
     
@@ -131,6 +127,7 @@ class ViewController: NSViewController {
     }
     
     @IBAction func NoAnimation(_ sender: Any) {
+        
         timer.invalidate()
         
         if let algo = solver{
@@ -148,7 +145,6 @@ class ViewController: NSViewController {
     }
     
     @IBAction func Reset(_ sender: Any) {
-        
         solver?.reset()
         
         timer.invalidate()

@@ -723,7 +723,7 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="ShowAnimation:" target="XfG-lQ-9wD" id="xWH-gb-0UA"/>
+                                    <action selector="StartAnimation:" target="XfG-lQ-9wD" id="xWH-gb-0UA"/>
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="PP3-JY-w1c">
@@ -770,7 +770,7 @@
                                         </items>
                                     </menu>
                                     <connections>
-                                        <action selector="MazeSelected:" target="XfG-lQ-9wD" id="A0t-vg-jAt"/>
+                                        <action selector="taskSelected:" target="XfG-lQ-9wD" id="A0t-vg-jAt"/>
                                     </connections>
                                 </popUpButtonCell>
                             </popUpButton>
@@ -853,7 +853,6 @@
                         <outlet property="algorithms" destination="uR9-LB-WrD" id="Os1-6m-zUz"/>
                         <outlet property="graphicsView" destination="QAb-7S-Xg5" id="txr-7G-CRV"/>
                         <outlet property="mazes" destination="Edc-KO-Ngy" id="Ml9-08-e82"/>
-                        <outlet property="showOnlySolutionCheckBox" destination="2KV-W8-MuM" id="8yT-jw-7yM"/>
                         <outlet property="speedSlider" destination="g8T-MC-aXf" id="SeI-y3-2ge"/>
                     </connections>
                 </viewController>

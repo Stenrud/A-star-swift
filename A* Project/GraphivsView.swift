@@ -22,38 +22,16 @@ class GraphicsView : NSView{
     
     var showOnlySolution = true
     
-    let green = NSColor.green
-    let blue = NSColor.blue
-    let gray = NSColor.gray
-    
     let startColor = NSColor(red: 1, green: 0, blue: 1, alpha: 1)
     let endColor = NSColor(red: 0, green: 0.5, blue: 1, alpha: 1)
     
-//    let numberToColor = [
-//        "#" : NSColor.black,
-//        "A" : NSColor.yellow,
-//        "B" : NSColor.yellow,
-//        "." : NSColor.white,
-//        "r" : NSColor.brown,
-//        "g" : NSColor.green,
-//        "f" : NSColor(red: 1.5*34 / 255, green: 1.5*139 / 255, blue: 1.5*34 / 255, alpha: 1),
-//        "m" : NSColor.gray,
-//        "w" : NSColor.blue
-//    ]
     let numberToColor = [
         -1 : NSColor.red,
-//        "A" : NSColor.yellow,
-//        "B" : NSColor.yellow,
         1 : NSColor(red: 0.843, green: 0.843, blue: 0.843, alpha: 1),
         2 : NSColor(red: 0.8, green: 0.8, blue: 0.8, alpha: 1),
         3 : NSColor(red: 0.6, green: 0.6, blue: 0.6, alpha: 1),
         4 : NSColor(red: 0.4, green: 0.4, blue: 0.4, alpha: 1),
         5 : NSColor(red: 0.2, green: 0.2, blue: 0.2, alpha: 1),
-//        "r" : NSColor.brown,
-//        "g" : NSColor.green,
-//        "f" : NSColor(red: 1.5*34 / 255, green: 1.5*139 / 255, blue: 1.5*34 / 255, alpha: 1),
-//        "m" : NSColor.gray,
-//        "w" : NSColor.blue
     ]
     
     override func viewWillStartLiveResize() {
@@ -188,14 +166,8 @@ class GraphicsView : NSView{
                 NSRect(x: x, y: y, width: width, height: height).fill()
             }
             
-            lastPoint = point
             //drawRect(x: point.x, y: point.y, size: 0.3)
+            lastPoint = point//drawRect(x: point.x, y: point.y, size: 0.3)
         }
-        
-        
-        //NSColor.white.setFill()
-        //dirtyRect.fill()
     }
-    
-    
 }
