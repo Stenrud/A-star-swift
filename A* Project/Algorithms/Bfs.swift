@@ -26,7 +26,7 @@ class Bfs: SearchAlgorithm{
         open.remove(at: current_index)
         closed.append(current_node)
         
-        if (current_node.point == maze.end_pos){
+        if (current_node.point == endPos){
             var path: [NSPoint] = []
             var current:Node? = current_node
             while (current != nil){
@@ -64,9 +64,18 @@ class Bfs: SearchAlgorithm{
             }
             
             child.g = current_node.g + maze.board[Int(child.point.x)][Int(child.point.y)]
-            let a = abs(child.point.x - maze.end_pos.x)
-            let b = abs(child.point.y - maze.end_pos.y)
-            child.h =  Int(a + b)
+            
+            var difX = abs(child.point.x - endPos.x)
+            let difY = abs(child.point.y - endPos.y)
+            
+            if let dest = maze.goal_end_pos {
+                let hCandidate = difX + difY
+                let futureX = max(endPos.x - hCandidate / 4, dest.x)
+                difX = abs(child.point.x - futureX)
+            }
+            
+            child.h =  Int(difX + difY)
+            
             child.f = child.g + child.h
             
             for (i, open_cell) in open.enumerated(){

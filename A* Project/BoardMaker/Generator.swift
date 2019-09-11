@@ -108,6 +108,11 @@ class Generator{
         print(board)
         let start = transform(startPos[task]!, board)
         let end = transform(endPos[task]!, board)
+        
+        if(task == "Task5"){
+            return Maze(board: arr, start_pos: start, end_pos: end, goal_end_pos: transform(CGPoint(x:6, y:7), board))
+        }
+        
         return Maze(board: arr, start_pos: start, end_pos: end)
     }
     

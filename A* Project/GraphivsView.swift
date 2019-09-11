@@ -79,26 +79,34 @@ class GraphicsView : NSView{
         needsDisplay = true
     }
     
+    func calculatePhysicalMeasurements(){
+        guard let aStar = algo else{
+            fatalError("An algorithm should be loaded")
+        }
+        
+        let boardWidth = CGFloat(aStar.boardWidth), boardHeight = CGFloat(aStar.boardHeight)
+        
+        pixelSize = min(bounds.width / boardWidth, bounds.height / boardHeight)
+        
+        let realBoardWidth = boardWidth * pixelSize!
+        let realBoardHeight = boardHeight * pixelSize!
+        
+        let offsetX = bounds.width / 2.0 - realBoardWidth / 2
+        let offsetY = bounds.height / 2.0 - realBoardHeight / 2
+        
+        boardBounds = NSRect(x: offsetX, y: offsetY, width: realBoardWidth, height: realBoardHeight)
+        
+        needsResizing = false
+    }
+    
     override func draw(_ dirtyRect: NSRect) {
         
         guard let aStar = algo else{
             fatalError("An algorithm should be loaded")
         }
         
-        let board = aStar.maze
-        
         if (isResizing || needsResizing || pixelSize == nil){
-            pixelSize = min(bounds.width / CGFloat(board.width), bounds.height / CGFloat(board.height))
-            
-            let boardWidth = CGFloat(board.width) * pixelSize!
-            let boardHeight = CGFloat(board.height) * pixelSize!
-            
-            let offsetX = bounds.width / 2.0 - boardWidth / 2
-            let offsetY = bounds.height / 2.0 - boardHeight / 2
-            
-            boardBounds = NSRect(x: offsetX, y: offsetY, width: boardWidth, height: boardHeight)
-            
-            needsResizing = false
+            calculatePhysicalMeasurements()
         }
         
         guard let pixelSize = pixelSize, let boardBounds = boardBounds else{
@@ -112,20 +120,20 @@ class GraphicsView : NSView{
             NSRect(x: boardBounds.minX + x * pixelSize + pixelOffset / 2, y: boardBounds.minY + y * pixelSize + pixelOffset / 2, width: pixelSize - pixelOffset, height: pixelSize - pixelOffset).fill()
         }
         
-        for x in 0...board.width - 1{
+        for x in 0...aStar.boardWidth - 1{
             
-            for y in 0...board.height - 1{
+            for y in 0...aStar.boardHeight - 1{
                 
-                numberToColor[board.board[x][y]]?.setFill()
+                numberToColor[aStar.get(x, y)]?.setFill()
                 drawRect(x: CGFloat(x), y: CGFloat(y), size: 1.1)
                 
             }
         }
         
         startColor.setFill()
-        drawRect(x: board.start_pos.x, y: board.start_pos.y, size: 1)
+        drawRect(x: aStar.startPos.x, y: aStar.startPos.y, size: 1)
         endColor.setFill()
-        drawRect(x: board.end_pos.x, y: board.end_pos.y, size: 1)
+        drawRect(x: aStar.endPos.x, y: aStar.endPos.y, size: 1)
         
         if(algo?.solution.count == 0 || !showOnlySolution){
             NSColor.red.setFill()

@@ -10,27 +10,20 @@ import Cocoa
 
 class Maze{
     
-    var board : [[Int]]
-    var start_pos : CGPoint
-    var end_pos : CGPoint
-    var width = 0
-    var height = 0
+    private(set) var board : [[Int]]
+    let start_pos : CGPoint
+    let end_pos : CGPoint
+    let goal_end_pos : CGPoint?
+    let width : Int
+    let height : Int
     
-    init(board : [[Int]], start_pos : CGPoint, end_pos : CGPoint) {
+    
+    init(board : [[Int]], start_pos : CGPoint, end_pos : CGPoint, goal_end_pos : CGPoint? = nil) {
         self.board = board
         self.start_pos = start_pos
         self.end_pos = end_pos
+        self.goal_end_pos = goal_end_pos
         
-        confirmDImentions()
-    }
-
-    func setBoard(board : [[Int]]){
-        self.board = board
-        
-        confirmDImentions()
-    }
-    
-    private func confirmDImentions(){
         width = board.count
         height = board[0].count
         
@@ -39,4 +32,7 @@ class Maze{
         }
     }
     
+    func set(x: Int, y: Int, value: Int){
+        board[x][y] = value
+    }
 }

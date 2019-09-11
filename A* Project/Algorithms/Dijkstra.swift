@@ -34,7 +34,7 @@ class Dijkstra: SearchAlgorithm {
         open.remove(at: current_index)
         closed.append(current_node)
         
-        if (current_node.point == maze.end_pos){
+        if (current_node.point == endPos){
             var path: [NSPoint] = []
             var current:Node? = current_node
             while (current != nil){
