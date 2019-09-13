@@ -146,6 +146,17 @@ class ViewController: NSViewController {
         
     }
     
+    override func keyDown(with event: NSEvent) {
+        print (event.keyCode)
+        
+        if(event.keyCode == 0x31){ // space
+            timer.invalidate()
+            solver?.reset()
+            
+            initiateTimer()
+        }
+    }
+    
     @IBAction func Reset(_ sender: Any) {
         solver?.reset()
         

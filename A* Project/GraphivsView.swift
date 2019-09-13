@@ -16,7 +16,7 @@ class GraphicsView : NSView{
     
     var boardBounds : NSRect?
     var pixelSize : CGFloat?
-    
+    var clickCounter = 0
     var isResizing = false
     var needsResizing = true
     
@@ -75,7 +75,12 @@ class GraphicsView : NSView{
             return
         }
         
-        algorithm.set(x, y, -1)
+        if(clickCounter % 2 == 0){
+            algorithm.setStartPos(x: x, y: y)
+        }else{
+            algorithm.setEndPos(x: x, y: y)
+        }
+        clickCounter += 1
         needsDisplay = true
     }
     

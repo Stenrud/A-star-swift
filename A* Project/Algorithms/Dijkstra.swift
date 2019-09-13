@@ -21,17 +21,8 @@ class Dijkstra: SearchAlgorithm {
             return false
         }
         
-        var current_node = open[0]
-        var current_index = 0
+        let current_node = open.removeFirst()
         
-        for (i, item) in open.enumerated(){
-            if(item.g < current_node.g){
-                current_node = item
-                current_index = i
-            }
-        }
-        
-        open.remove(at: current_index)
         closed.append(current_node)
         
         if (current_node.point == endPos){
@@ -41,55 +32,54 @@ class Dijkstra: SearchAlgorithm {
                 path.append(current!.point)
                 current = current!.parent
             }
+            
             solution = path
             
             return false
         }
         
-        var children : [Node] = []
+        var children : [NSPoint] = []
         //        for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1)]{
         for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0)]{
-            let nodeX = Int(current_node.point.x) + new_position.0
-            let nodeY = Int(current_node.point.y) + new_position.1
+            let childX = Int(current_node.point.x) + new_position.0
+            let childY = Int(current_node.point.y) + new_position.1
             
-            if(nodeX > maze.board.count - 1 || nodeX < 0 || nodeY > maze.board[nodeX].count - 1 || nodeY < 0){
+            if(childX > maze.width - 1 || childX < 0 || childY > maze.height - 1 || childY < 0){
                 continue
             }
             
-            if(maze.board[nodeX][nodeY] == -1){
+            if(maze.board[childX][childY] == -1){
                 continue
             }
             
-            let new_node = Node(current_node, NSPoint(x:nodeX, y:nodeY))
-            
-            children.append(new_node)
+            children.append(NSPoint(x:childX, y:childY))
         }
         
         for child in children{
             
-            if(closed.contains(where: {x -> Bool in x.point == child.point })){
+            if(closed.contains(where: {x -> Bool in x.point == child })){
                 continue
             }
             
-            child.g = current_node.g + maze.board[Int(child.point.x)][Int(child.point.y)]
+            let g = current_node.g + maze.board[Int(child.x)][Int(child.y)]
+
+            let i = open.firstIndex { open_node -> Bool in open_node.point == child}
             
-            for (i, open_cell) in open.enumerated(){
-                if(open_cell.point == child.point){
-                    if(open_cell.g > child.g){
-                        open[i] = child
-                    }
-                    break
-                }
-            }
+            let childNode = Node(current_node, child, g: g)
             
-            let i = open.firstIndex { open_node -> Bool in open_node.point == child.point}
-            
-            if let index = i{
-                if(child.g < open[index].g){
-                    open[index] = child
+            // replace if node already exist, otherwise add to the back
+            if let index = i {
+                if(g < open[index].g){
+                    open[index] = childNode
                 }
             }else{
-                open.append(child)
+                let i = open.firstIndex { open_node -> Bool in open_node.f >= childNode.f }
+                if let index = i {
+                    open.insert(childNode, at: index)
+                }
+                else{
+                    open.append(childNode)
+                }
             }
             
         }

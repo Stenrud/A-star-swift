@@ -8,6 +8,7 @@
 
 import Cocoa
 
+
 class SearchAlgorithm: IAlgorithm {
     
     func get(_ x:Int, _ y:Int) -> Int {
@@ -21,8 +22,8 @@ class SearchAlgorithm: IAlgorithm {
     
     internal var maze : Maze
     var start_node : Node
-    
     var open: [Node] = []
+    
     var closed: [Node] = []
     var solution: [NSPoint] = []
     var endPos: NSPoint
@@ -32,9 +33,21 @@ class SearchAlgorithm: IAlgorithm {
     
     init(board: Maze) {
         self.maze = board
-        start_node = Node(nil, board.start_pos)
+        start_node = Node(nil, board.start_pos, g: 0, h: 0)
         open.append(start_node)
         endPos = maze.end_pos
+    }
+    
+    func setStartPos(x: Int, y: Int){
+        maze = Maze(board: maze.board, start_pos: CGPoint(x: x, y: y), end_pos: maze.end_pos, goal_end_pos: maze.goal_end_pos)
+        
+        reset()
+    }
+    
+    func setEndPos(x: Int, y: Int){
+        maze = Maze(board: maze.board, start_pos: maze.start_pos, end_pos: CGPoint(x: x, y: y), goal_end_pos: maze.goal_end_pos)
+        
+        reset()
     }
     
     var tickCount = 0
@@ -55,7 +68,7 @@ class SearchAlgorithm: IAlgorithm {
         solution.removeAll()
         endPos = maze.end_pos
         self.maze = maze
-        start_node = Node(nil, maze.start_pos)
+        start_node = Node(nil, maze.start_pos, g: 0, h: 0)
         open.append(start_node)
     }
     
@@ -65,7 +78,7 @@ class SearchAlgorithm: IAlgorithm {
         solution.removeAll()
         tickCount = 0
         endPos = maze.end_pos
-
+        start_node = Node(nil, maze.start_pos, g: 0, h: 0)
         open.append(start_node)
     }
     

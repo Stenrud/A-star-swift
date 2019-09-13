@@ -17,6 +17,8 @@ protocol IAlgorithm {
     var boardHeight : Int { get }
     var boardWidth : Int { get }
     
+    func setStartPos(x: Int, y: Int)
+    func setEndPos(x: Int, y: Int)
     func processTarget()
     func loadNewBoard(maze: Maze)
     func reset()
