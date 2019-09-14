@@ -9,14 +9,11 @@
 import Cocoa
 
 protocol IAlgorithm {
-    var maze:Maze { get }
+    var board:[[Int]] { get }
     var open: [Node] { get }
     var closed: [Node] { get }
     var solution: [NSPoint] { get }
     
-    func loadNewBoard(maze: Maze)
-    func reset()
     func step() -> Bool
     func execute() -> Bool
-    func set(_:Int, _:Int, _:Int)
 }

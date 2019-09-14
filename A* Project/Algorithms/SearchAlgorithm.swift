@@ -10,40 +10,23 @@ import Cocoa
 
 class SearchAlgorithm: IAlgorithm {
     
-    func set(_ x: Int, _ y : Int, _ newValue : Int) {
-        maze.board[x][y] = newValue
-        solution.removeAll()
-    }
-    
-    var maze : Maze
-    var start_node : Node
+    let board : [[Int]]
+    let start_node : Node
+    let end : NSPoint
+    let boardWidth : Int
+    let boardHeight : Int
     
     var open: [Node] = []
     var closed: [Node] = []
     var solution: [NSPoint] = []
     
-    init(board: Maze) {
-        self.maze = board
-        start_node = Node(nil, board.start_pos)
+    init(board: [[Int]], start: NSPoint, end: NSPoint) {
+        self.board = board
+        start_node = Node(nil, start, g: 0)
+        self.end = end
         open.append(start_node)
-    }
-    
-    func loadNewBoard(maze: Maze){
-        open.removeAll()
-        closed.removeAll()
-        solution.removeAll()
-        
-        self.maze = maze
-        start_node = Node(nil, maze.start_pos)
-        open.append(start_node)
-    }
-    
-    func reset(){
-        open.removeAll()
-        closed.removeAll()
-        solution.removeAll()
-        
-        open.append(start_node)
+        boardWidth = board.count
+        boardHeight = board[0].count
     }
     
     func step() -> Bool {

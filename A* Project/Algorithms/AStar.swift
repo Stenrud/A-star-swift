@@ -11,8 +11,8 @@ import Cocoa
 
 class AStar: SearchAlgorithm{
     
-    override init(board: Maze) {
-        super.init(board: board)
+    override init(board: [[Int]], start: NSPoint, end: NSPoint) {
+        super.init(board: board, start: start, end: end)
     }
     
     override func step() -> Bool{
@@ -20,21 +20,22 @@ class AStar: SearchAlgorithm{
             return false
         }
 
+        var i = 0
         var current_node = open[0]
-        var current_index = 0
         
-        for (i, item) in open.enumerated().reversed(){
-            
-            if(item.f < current_node.f){
-                current_node = item
-                current_index = i
+        if(open.count > 1){
+            for index in 1...open.count - 1{
+                if(open[index].f < current_node.f){
+                    i = index
+                    current_node = open[index]
+                }
             }
         }
         
-        open.remove(at: current_index)
+        open.remove(at: i)
         closed.append(current_node)
         
-        if (current_node.point == maze.end_pos){
+        if (current_node.point == end){
             var path: [NSPoint] = []
             var current:Node? = current_node
             while (current != nil){
@@ -47,56 +48,50 @@ class AStar: SearchAlgorithm{
             return false
         }
         
-        var children : [Node] = []
+        var children : [NSPoint] = []
 //        for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1)]{
         for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0)]{
             let nodeX = Int(current_node.point.x) + new_position.0
             let nodeY = Int(current_node.point.y) + new_position.1
             
-            if(nodeX > maze.width - 1 || nodeX < 0 || nodeY > maze.height - 1 || nodeY < 0){
+            if(nodeX > boardWidth - 1 || nodeX < 0 || nodeY > boardHeight - 1 || nodeY < 0){
                 continue
             }
             
-            if(maze.board[nodeX][nodeY] == -1){
+            if(board[nodeX][nodeY] == -1){
+                continue
+            }
+
+            let newPoint = NSPoint(x:nodeX, y:nodeY)
+            
+            if(closed.contains(where: {x -> Bool in x.point == newPoint })){
                 continue
             }
             
-            let new_node = Node(current_node, NSPoint(x:nodeX, y:nodeY))
-            
-            children.append(new_node)
+            children.append(newPoint)
         }
         
         for child in children{
             
-            if(closed.contains(where: {x -> Bool in x.point == child.point })){
-                continue
-            }
+            let g = current_node.g + board[Int(child.x)][Int(child.y)]
+            let a = abs(child.x - end.x)
+            let b = abs(child.y - end.y)
+
+            let h =  Int(a + b)
             
-            child.g = current_node.g + maze.board[Int(child.point.x)][Int(child.point.y)]
-            let a = abs(child.point.x - maze.end_pos.x)
-            let b = abs(child.point.y - maze.end_pos.y)
-            child.h =  Int(a + b)
-            child.f = child.g + child.h
+            //print(open.map{c -> Int in c.f})
             
-            for (i, open_cell) in open.enumerated(){
-                if(open_cell.point == child.point){
-                    if(open_cell.g > child.g){
-                        open[i] = child
-                    }
-                    break
+            let i = open.firstIndex { node -> Bool in node.point == child }
+            
+            if let i = i {
+                if open[i].g > g {
+                    //print("Remove at ", i)
+                    open[i] = Node(current_node, child, g: g, h: h)
                 }
             }
-            
-            let i = open.firstIndex { open_node -> Bool in open_node.point == child.point}
-            
-            if let index = i{
-                if(child.g < open[index].g){
-                    open[index] = child
-                }
-            }else{
-                open.append(child)
+            else{
+                open.insert(Node(current_node, child, g: g, h: h), at:0)
             }
-            
         }
         return true
     }

@@ -14,6 +14,7 @@ class ViewController: NSViewController {
     let dijkstra = String(describing: Dijkstra.self)
     let bfs = String(describing: Bfs.self)
     
+    
     @IBOutlet weak var graphicsView: GraphicsView!
     @IBOutlet weak var mazes: NSPopUpButtonCell!
     @IBOutlet weak var algorithms: NSPopUpButtonCell!
@@ -51,12 +52,6 @@ class ViewController: NSViewController {
         algorithms.addItem(withTitle: aStar)
         algorithms.addItem(withTitle: dijkstra)
         algorithms.addItem(withTitle: bfs)
-       
-        if let file = mazes.selectedItem?.title {
-            solver = AStar(board: Generator.GenerateBoardFromCsv(task: file))
-        }
-        
-        graphicsView.loadAlgorithm(solver!)
     }
 
     @IBAction func changeSpeed(_ sender: Any) {
@@ -70,85 +65,50 @@ class ViewController: NSViewController {
     
     
     @IBAction func taskSelected(_ sender: Any) {
-        
-        timer.invalidate()
-        if let task = mazes.selectedItem?.title {
-            solver?.loadNewBoard(maze: Generator.GenerateBoardFromCsv(task: task))
-            graphicsView.needsDisplay = true
-            graphicsView.needsResizing = true
-        }
+    
+//        timer.invalidate()
+//        if let task = mazes.selectedItem?.title {
+//            graphicsView.needsDisplay = true
+//            graphicsView.needsResizing = true
+//        }
     }
 
     @IBAction func AlgorithmSelected(_ sender: Any) {
-
-        guard let algo = graphicsView.algo else{
-            return
-        }
-        
-        if(algorithms.titleOfSelectedItem == dijkstra){
-            timer.invalidate()
-            solver = Dijkstra(board: algo.maze)
-            graphicsView.loadAlgorithm(solver!)
-        }
-        else if(algorithms.titleOfSelectedItem == aStar){
-            timer.invalidate()
-            solver = AStar(board: algo.maze)
-            graphicsView.loadAlgorithm(solver!)
-        }
-        else if(algorithms.titleOfSelectedItem == bfs){
-            timer.invalidate()
-            solver = Bfs(board: algo.maze)
-            graphicsView.loadAlgorithm(solver!)
-        }
+        timer.invalidate()
     }
     
     func TakeOneStep() -> Bool{
-        
-        let didStep = solver!.step()
-
-        graphicsView.needsDisplay = true
-        
-        return didStep
+        return graphicsView.step()
     }
 
     @IBAction func StartAnimation(_ sender: Any) {
-        timer.invalidate()
-        solver?.reset()
-        
         initiateTimer()
     }
     
     func initiateTimer(){
+        graphicsView.initiateAlgorithm(nameOfAlgo: algorithms.selectedItem!.title)
         timer = Timer.scheduledTimer(withTimeInterval: (50 - speedSlider.doubleValue) / 100, repeats: true, block: { _ in
-            if(!self.TakeOneStep()){
-                self.timer.invalidate()
+            for _ in 1...1{
+                if(!self.TakeOneStep()){
+                    self.timer.invalidate()
+                    break
+                }
             }
         })
     }
     
     @IBAction func NoAnimation(_ sender: Any) {
-        
         timer.invalidate()
+        graphicsView.reset()
         
-        if let algo = solver{
-            if(algo.execute()){
-                graphicsView.needsDisplay = true
-            }
-            else{
-                print("Didn't fint result, should not happen")
-            }
-        }
-        else{
-            print("No Algorithm initiated")
-        }
+        graphicsView.initiateAlgorithm(nameOfAlgo: algorithms.selectedItem!.title)
+        graphicsView.execute()
         
     }
     
     @IBAction func Reset(_ sender: Any) {
-        solver?.reset()
-        
         timer.invalidate()
-        graphicsView.needsDisplay = true
+        graphicsView.reset()
     }
 }
 

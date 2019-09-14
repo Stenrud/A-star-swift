@@ -14,14 +14,29 @@ class GraphicsView : NSView{
     
     var algo: IAlgorithm?
     
+    // what to draw
+    
+    private var board = Array(repeating: Array(repeating: 1, count: 40), count: 80)
+    private(set) var boardHeight = 40
+    private(set) var boardWidth = 80
+    private var start_pos: NSPoint?
+    private var end_pos: NSPoint?
+    
+
+    var showOnlySolution = true
+    
+    // where to draw
     var boardBounds : NSRect?
     var pixelSize : CGFloat?
     
+    // info
     var isResizing = false
     var needsResizing = true
+    var isDragging = false
     
-    var showOnlySolution = true
+    var lastCell = NSPoint(x:0, y:0)
     
+    // colors
     let startColor = NSColor(red: 1, green: 0, blue: 1, alpha: 1)
     let endColor = NSColor(red: 0, green: 0.5, blue: 1, alpha: 1)
     
@@ -34,30 +49,30 @@ class GraphicsView : NSView{
         5 : NSColor(red: 0.2, green: 0.2, blue: 0.2, alpha: 1),
     ]
     
+    // when the user starts resizing window
     override func viewWillStartLiveResize() {
         isResizing = true
     }
-    
+
+    // when the user stops resizing window
     override func viewDidEndLiveResize() {
         isResizing = false
     }
     
-    
-    func loadAlgorithm(_ algo: IAlgorithm){
-        self.algo = algo;
-        needsResizing = true
-        self.needsDisplay = true
+    override func mouseDown(with event: NSEvent) {
+        handleLeftClick(point: event.locationInWindow)
+        isDragging = true
     }
     
-    override func mouseDown(with event: NSEvent) {
-        drawDot(point: event.locationInWindow)
+    override func mouseUp(with event: NSEvent) {
+        isDragging = false
     }
     
     override func mouseDragged(with event: NSEvent) {
-        drawDot(point: event.locationInWindow)
+        handleLeftClick(point: event.locationInWindow)
     }
     
-    func drawDot(point : NSPoint){
+    func handleLeftClick(point : NSPoint){
         guard let rect = boardBounds, let size = pixelSize else{
             return
         }
@@ -68,35 +83,121 @@ class GraphicsView : NSView{
             return
         }
         
-        let x = Int((CGFloat(point.x) - rect.minX) / size)
-        let y = Int((CGFloat(point.y) - rect.minY) / size)
+        let (x, y) = convertToCellCoordinates(locationInView: point, boardBounds: rect, pixelSize: size)
         
-        guard let algorithm = algo else{
+        onCellClicked(x: x, y: y)
+        needsDisplay = true
+    }
+    
+    func convertToCellCoordinates(locationInView: NSPoint, boardBounds: NSRect, pixelSize: CGFloat) -> (Int, Int){
+        
+        let x = Int((CGFloat(locationInView.x) - boardBounds.minX) / pixelSize)
+        let y = Int((CGFloat(locationInView.y) - boardBounds.minY) / pixelSize)
+        
+        return (x, y)
+    }
+
+    func onCellClicked(x: Int, y: Int){
+        if start_pos == nil {
+            start_pos = NSPoint(x: x, y: y)
+            return
+        }
+        if end_pos == nil {
+            end_pos = NSPoint(x: x, y: y)
             return
         }
         
-        algorithm.set(x, y, -1)
+        let clickValue = -1
+        
+        if(isDragging){
+            let newCell = NSPoint(x:x, y:y)
+            drawLine(from: lastCell, to: newCell, with: clickValue)
+            lastCell = newCell
+        }else{
+            board[x] [y] = clickValue
+            lastCell = NSPoint(x: x, y: y)
+        }
+        
+        reset()
+    }
+    
+    func drawLine(from: NSPoint, to: NSPoint, with: Int){
+        let difX = to.x - from.x
+        let difY = to.y - from.y
+        
+        let nCells = max(abs(difX), abs(difY))
+        
+        if(nCells == 0){
+            return
+        }
+        
+        let stepX = difX / nCells
+        let stepY = difY / nCells
+        
+        for i in 0...Int(nCells){
+            let floatI = CGFloat(i)
+            let x = Int(round(from.x + floatI * stepX))
+            let y = Int(round(from.y + floatI * stepY))
+            board[x][y] = with
+        }
+    }
+    
+    func execute(){
+        guard let algo = algo else{
+            fatalError("Call initiateAlgorithm first")
+        }
+        algo.execute()
+        needsDisplay = true
+        
+    }
+    
+    func step() -> Bool {
+        guard let algo = algo else{
+            fatalError("Call initiateAlgorithm first")
+        }
+        needsDisplay = true
+        return algo.step()
+    }
+    
+    func initiateAlgorithm(nameOfAlgo: String){
+        
+        guard let start = start_pos, let end = end_pos else{
+            // to be changed with visual error
+            fatalError("Gotta pick start and end pos")
+            //return
+        }
+        
+        switch nameOfAlgo {
+        case String(describing: AStar.self):
+            algo = AStar(board: board, start: start, end: end)
+        case String(describing: Dijkstra.self):
+            algo = Dijkstra(board: board, start: start, end: end)
+        case String(describing: Bfs.self):
+            algo = Bfs(board: board, start: start, end: end)
+        default:
+            // not sure what to do here
+            fatalError("Algorithm must be added to switch case: " + nameOfAlgo)
+        }
+    }
+    
+    func reset(){
+        algo = nil
         needsDisplay = true
     }
     
     override func draw(_ dirtyRect: NSRect) {
-        
-        guard let aStar = algo else{
-            fatalError("An algorithm should be loaded")
-        }
-        
-        let board = aStar.maze
+        let a = DispatchTime.now()
         
         if (isResizing || needsResizing || pixelSize == nil){
-            pixelSize = min(bounds.width / CGFloat(board.width), bounds.height / CGFloat(board.height))
+            pixelSize = min(bounds.width / CGFloat(boardWidth), bounds.height / CGFloat(boardHeight))
             
-            let boardWidth = CGFloat(board.width) * pixelSize!
-            let boardHeight = CGFloat(board.height) * pixelSize!
+            let boardBoundsWidth = CGFloat(boardWidth) * pixelSize!
+            let boardBoundsHeight = CGFloat(boardHeight) * pixelSize!
             
-            let offsetX = bounds.width / 2.0 - boardWidth / 2
-            let offsetY = bounds.height / 2.0 - boardHeight / 2
+            let offsetX = bounds.width / 2.0 - boardBoundsWidth / 2
+            let offsetY = bounds.height / 2.0 - boardBoundsHeight / 2
             
-            boardBounds = NSRect(x: offsetX, y: offsetY, width: boardWidth, height: boardHeight)
+            boardBounds = NSRect(x: offsetX, y: offsetY, width: boardBoundsWidth, height: boardBoundsHeight)
             
             needsResizing = false
         }
@@ -112,62 +213,73 @@ class GraphicsView : NSView{
             NSRect(x: boardBounds.minX + x * pixelSize + pixelOffset / 2, y: boardBounds.minY + y * pixelSize + pixelOffset / 2, width: pixelSize - pixelOffset, height: pixelSize - pixelOffset).fill()
         }
         
-        for x in 0...board.width - 1{
+        for x in 0...board.count - 1{
             
-            for y in 0...board.height - 1{
+            for y  in 0...board[x].count - 1{
                 
-                numberToColor[board.board[x][y]]?.setFill()
+                numberToColor[board[x][y]]?.setFill()
                 drawRect(x: CGFloat(x), y: CGFloat(y), size: 1.1)
                 
             }
         }
         
-        startColor.setFill()
-        drawRect(x: board.start_pos.x, y: board.start_pos.y, size: 1)
-        endColor.setFill()
-        drawRect(x: board.end_pos.x, y: board.end_pos.y, size: 1)
+        if let start = start_pos {
+            startColor.setFill()
+            drawRect(x: start.x, y: start.y, size: 1)
+        }
         
-        if(algo?.solution.count == 0 || !showOnlySolution){
+        if let end = end_pos {
+            endColor.setFill()
+            drawRect(x: end.x, y: end.y, size: 1)
+        }
+        
+        guard let algo = algo else{
+            let b = DispatchTime.now()
+            print((b.uptimeNanoseconds - a.uptimeNanoseconds) / 1_000_000)
+            return
+        }
+        if(algo.solution.count == 0 || !showOnlySolution){
             NSColor.red.setFill()
-            for point in aStar.closed{
+            for point in algo.closed{
                 drawRect(x: point.point.x, y: point.point.y, size: 0.5)
             }
-            
-            for point in aStar.open{
+
+            for point in algo.open{
                 drawRect(x: point.point.x, y: point.point.y, size: 0.5)
             }
-            
+
             NSColor.green.setFill()
-            for point in aStar.open{
+            for point in algo.open{
                 drawRect(x: point.point.x, y: point.point.y, size: 0.3)
             }
-            
-        }
+        
+         }
         
         let size = CGFloat(0.2)
         let pixelOffset = pixelSize * (1 - size)
-        
-        
+
+
         NSColor.yellow.setFill()
         var lastPoint : NSPoint?
-        
-        for point in aStar.solution{
-            
+
+        for point in algo.solution{
+
             if let lastPoint = lastPoint{
                 let x = boardBounds.minX + min(point.x, lastPoint.x) * pixelSize + pixelOffset / 2
                 let y = boardBounds.minY + min(point.y, lastPoint.y) * pixelSize + pixelOffset / 2
-                
+
                 var width = pixelSize - pixelOffset
                 var height = pixelSize - pixelOffset
-                
+
                 width += pixelSize * abs(point.x - lastPoint.x)
                 height += pixelSize * abs(point.y - lastPoint.y)
-                
+
                 NSRect(x: x, y: y, width: width, height: height).fill()
             }
-            
+
             //drawRect(x: point.x, y: point.y, size: 0.3)
             lastPoint = point//drawRect(x: point.x, y: point.y, size: 0.3)
         }
+    
     }
 }

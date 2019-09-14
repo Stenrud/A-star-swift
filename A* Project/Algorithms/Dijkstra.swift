@@ -12,8 +12,8 @@ import Cocoa
 class Dijkstra: SearchAlgorithm {
     
     
-    override init(board: Maze) {
-        super.init(board: board)
+    override init(board: [[Int]], start: NSPoint, end: NSPoint) {
+        super.init(board: board, start: start, end: end)
     }
     
     override func step() -> Bool{
@@ -21,75 +21,73 @@ class Dijkstra: SearchAlgorithm {
             return false
         }
         
-        var current_node = open[0]
-        var current_index = 0
+        let current_node = open.popLast()!
         
-        for (i, item) in open.enumerated(){
-            if(item.g < current_node.g){
-                current_node = item
-                current_index = i
-            }
-        }
-        
-        open.remove(at: current_index)
         closed.append(current_node)
         
-        if (current_node.point == maze.end_pos){
+        if (current_node.point == end){
             var path: [NSPoint] = []
             var current:Node? = current_node
             while (current != nil){
                 path.append(current!.point)
                 current = current!.parent
             }
+            
             solution = path
             
             return false
         }
         
-        var children : [Node] = []
+        var children : [NSPoint] = []
         //        for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1)]{
         for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0)]{
             let nodeX = Int(current_node.point.x) + new_position.0
             let nodeY = Int(current_node.point.y) + new_position.1
             
-            if(nodeX > maze.board.count - 1 || nodeX < 0 || nodeY > maze.board[nodeX].count - 1 || nodeY < 0){
+            if(nodeX > boardWidth - 1 || nodeX < 0 || nodeY > boardHeight - 1 || nodeY < 0){
                 continue
             }
             
-            if(maze.board[nodeX][nodeY] == -1){
+            if(board[nodeX][nodeY] == -1){
                 continue
             }
             
-            let new_node = Node(current_node, NSPoint(x:nodeX, y:nodeY))
+            let newPoint = NSPoint(x:nodeX, y:nodeY)
             
-            children.append(new_node)
+            if(closed.contains(where: {x -> Bool in x.point == newPoint })){
+                continue
+            }
+            
+            children.append(newPoint)
         }
         
         for child in children{
             
-            if(closed.contains(where: {x -> Bool in x.point == child.point })){
-                continue
-            }
+            let g = current_node.g + board[Int(child.x)][Int(child.y)]
+          
             
-            child.g = current_node.g + maze.board[Int(child.point.x)][Int(child.point.y)]
+            //print(open.map{c -> Int in c.f})
             
-            for (i, open_cell) in open.enumerated(){
-                if(open_cell.point == child.point){
-                    if(open_cell.g > child.g){
-                        open[i] = child
-                    }
-                    break
+            let i = open.lastIndex { node -> Bool in node.point == child }
+            
+            if let i = i{
+                if open[i].g > g{
+                    //print("Remove at ", i)
+                    open.remove(at: i)
+                }
+                else{
+                    continue
                 }
             }
+            let newNode = Node(current_node, child, g: g)
+            let newI = (open.lastIndex { node -> Bool in node.f >= newNode.f })
             
-            let i = open.firstIndex { open_node -> Bool in open_node.point == child.point}
-            
-            if let index = i{
-                if(child.g < open[index].g){
-                    open[index] = child
-                }
-            }else{
-                open.append(child)
+            if let newI = newI{
+                //print("Insert ", newNode.f, " at ", newI + 1)
+                open.insert(newNode, at: newI + 1)
+            }
+            else{
+                open.insert(newNode, at: 0)
             }
             
         }

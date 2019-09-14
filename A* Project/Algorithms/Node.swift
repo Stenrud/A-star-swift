@@ -14,13 +14,16 @@ class Node
     let parent : Node?
     let point : NSPoint
     
-    var g = 0
-    var h = 0
-    var f = 0
+    let g: Int
+    let h: Int
+    let f: Int
     
-    init(_ parent: Node?, _ point :NSPoint){
+    init(_ parent: Node?, _ point :NSPoint, g: Int, h:Int = 0){
         self.parent = parent
         self.point = point
+        self.g = g
+        self.h = h
+        f = g + h
     }
     
 }
