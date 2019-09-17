@@ -114,11 +114,11 @@ class GraphicsView : NSView{
             drawLine(from: lastCell, to: newCell, with: clickValue)
             lastCell = newCell
         }else{
-            board[x] [y] = clickValue
+            board[x] [y] = board[x][y] == 1 ? -1 : 1
             lastCell = NSPoint(x: x, y: y)
         }
         
-        reset()
+       // reset()
     }
     
     func drawLine(from: NSPoint, to: NSPoint, with: Int){

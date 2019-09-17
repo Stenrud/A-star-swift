@@ -19,6 +19,8 @@ class ViewController: NSViewController {
     @IBOutlet weak var mazes: NSPopUpButtonCell!
     @IBOutlet weak var algorithms: NSPopUpButtonCell!
     @IBOutlet weak var speedSlider: NSSliderCell!
+    @IBOutlet weak var speedStepper: NSStepper!
+    @IBOutlet weak var speedText: NSTextField!
     
     var solver: IAlgorithm?
     var timer = Timer()
@@ -54,6 +56,9 @@ class ViewController: NSViewController {
         algorithms.addItem(withTitle: bfs)
     }
 
+    @IBAction func speedStepperChanged(_ sender: Any) {
+        speedText.stringValue = speedStepper.stringValue
+    }
     @IBAction func changeSpeed(_ sender: Any) {
             if(timer.isValid){
                 timer.invalidate()
@@ -88,7 +93,7 @@ class ViewController: NSViewController {
     func initiateTimer(){
         graphicsView.initiateAlgorithm(nameOfAlgo: algorithms.selectedItem!.title)
         timer = Timer.scheduledTimer(withTimeInterval: (50 - speedSlider.doubleValue) / 100, repeats: true, block: { _ in
-            for _ in 1...1{
+            for _ in 1...self.speedStepper.intValue{
                 if(!self.TakeOneStep()){
                     self.timer.invalidate()
                     break

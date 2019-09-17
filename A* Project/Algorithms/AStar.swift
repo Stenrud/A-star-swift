@@ -15,22 +15,48 @@ class AStar: SearchAlgorithm{
         super.init(board: board, start: start, end: end)
     }
     
+    func getTwoLastBestNodes()-> [Int]{
+        
+        if(open.count == 1){
+            return [0]
+        }
+        
+        var firstI = 0, lastI : Int?;
+        
+        
+        for i in 1...open.count - 1 {
+            if(open[i].f <= open[firstI].f){
+                if(open[i].f == open[firstI].f){
+                    lastI = firstI
+                    firstI = i
+                }else{
+                    firstI = i
+                    lastI = nil
+                }
+            }
+        }
+        
+        var result = [firstI]
+        if let last = lastI {
+            result.append(last)
+        }
+        
+        return result
+    }
+    
     override func step() -> Bool{
         if(open.isEmpty || !solution.isEmpty){
             return false
         }
 
-        var i = 0
-        var current_node = open[0]
+
         
-        if(open.count > 1){
-            for index in 1...open.count - 1{
-                if(open[index].f < current_node.f){
-                    i = index
-                    current_node = open[index]
-                }
-            }
-        }
+        
+        let candidateIndexes = getTwoLastBestNodes()
+        
+        var i = Int.random(in: 0..<candidateIndexes.count)
+        i = candidateIndexes[i]
+        let current_node = open[i]
         
         open.remove(at: i)
         closed.append(current_node)
@@ -85,12 +111,11 @@ class AStar: SearchAlgorithm{
             
             if let i = i {
                 if open[i].g > g {
-                    //print("Remove at ", i)
                     open[i] = Node(current_node, child, g: g, h: h)
                 }
             }
             else{
-                open.insert(Node(current_node, child, g: g, h: h), at:0)
+                open.append(Node(current_node, child, g: g, h: h))
             }
         }
         return true
