@@ -18,12 +18,9 @@ class ViewController: NSViewController {
     @IBOutlet weak var graphicsView: GraphicsView!
     @IBOutlet weak var mazes: NSPopUpButtonCell!
     @IBOutlet weak var algorithms: NSPopUpButtonCell!
-    @IBOutlet weak var speedSlider: NSSliderCell!
-    @IBOutlet weak var speedStepper: NSStepper!
     @IBOutlet weak var speedText: NSTextField!
     
     var solver: IAlgorithm?
-    var timer = Timer()
     
     @IBAction func onShowOnlySolutionChanged(_ sender: Any) {
         guard let button = sender as? NSButton else{
@@ -57,16 +54,18 @@ class ViewController: NSViewController {
     }
 
     @IBAction func speedStepperChanged(_ sender: Any) {
-        speedText.stringValue = speedStepper.stringValue
-    }
-    @IBAction func changeSpeed(_ sender: Any) {
-            if(timer.isValid){
-                timer.invalidate()
-                
-                initiateTimer()
-            }
+        if let stepper = sender as? NSStepper{
+            speedText.stringValue = stepper.stringValue
+            graphicsView.setIterationsPerFrame(stepper.integerValue)
+        }
     }
     
+    @IBAction func changeSpeed(_ sender: Any) {
+        if let slider = sender as? NSSlider {
+            graphicsView.setFrameSpeed(slider.doubleValue)
+        }
+
+    }
     
     
     @IBAction func taskSelected(_ sender: Any) {
@@ -79,40 +78,22 @@ class ViewController: NSViewController {
     }
 
     @IBAction func AlgorithmSelected(_ sender: Any) {
-        timer.invalidate()
-    }
-    
-    func TakeOneStep() -> Bool{
-        return graphicsView.step()
+        graphicsView.reset()
     }
 
     @IBAction func StartAnimation(_ sender: Any) {
-        initiateTimer()
-    }
-    
-    func initiateTimer(){
-        graphicsView.initiateAlgorithm(nameOfAlgo: algorithms.selectedItem!.title)
-        timer = Timer.scheduledTimer(withTimeInterval: (50 - speedSlider.doubleValue) / 100, repeats: true, block: { _ in
-            for _ in 1...self.speedStepper.intValue{
-                if(!self.TakeOneStep()){
-                    self.timer.invalidate()
-                    break
-                }
-            }
-        })
+        if let title = algorithms.selectedItem?.title{
+            graphicsView.startAnimation(title)
+        }
     }
     
     @IBAction func NoAnimation(_ sender: Any) {
-        timer.invalidate()
-        graphicsView.reset()
-        
-        graphicsView.initiateAlgorithm(nameOfAlgo: algorithms.selectedItem!.title)
-        graphicsView.execute()
-        
+        if let title = algorithms.selectedItem?.title{
+            graphicsView.execute(title)
+        }
     }
     
     @IBAction func Reset(_ sender: Any) {
-        timer.invalidate()
         graphicsView.reset()
     }
 }

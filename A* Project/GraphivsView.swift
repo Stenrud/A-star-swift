@@ -13,6 +13,7 @@ var number = 1
 class GraphicsView : NSView{
     
     var algo: IAlgorithm?
+    var timer = Timer()
     
     // what to draw
     
@@ -21,8 +22,11 @@ class GraphicsView : NSView{
     private(set) var boardWidth = 80
     private var start_pos: NSPoint?
     private var end_pos: NSPoint?
-    
 
+    // how fast to draw
+    private(set) var iterationsPerFrame = 1
+    private(set) var speed = 25.0
+    
     var showOnlySolution = true
     
     // where to draw
@@ -89,6 +93,23 @@ class GraphicsView : NSView{
         needsDisplay = true
     }
     
+    func setIterationsPerFrame(_ steps: Int){
+        if(steps > 0){
+            self.iterationsPerFrame = steps
+        }
+    }
+    
+    func setFrameSpeed(_ speed : Double){
+        
+        if(speed >= 0){
+            self.speed = speed
+        }
+        
+        if(timer.isValid){
+            initiateTimer()
+        }
+    }
+    
     func convertToCellCoordinates(locationInView: NSPoint, boardBounds: NSRect, pixelSize: CGFloat) -> (Int, Int){
         
         let x = Int((CGFloat(locationInView.x) - boardBounds.minX) / pixelSize)
@@ -142,12 +163,20 @@ class GraphicsView : NSView{
         }
     }
     
-    func execute(){
+    func execute(_ nameOfAlgo: String){
+        
+        initiateAlgorithm(nameOfAlgo: nameOfAlgo)
+        
         guard let algo = algo else{
             fatalError("Call initiateAlgorithm first")
         }
-        algo.execute()
-        needsDisplay = true
+        
+        if(algo.execute()){
+            needsDisplay = true
+        }
+        else{
+            // show alert, no path found
+        }
         
     }
     
@@ -159,7 +188,25 @@ class GraphicsView : NSView{
         return algo.step()
     }
     
-    func initiateAlgorithm(nameOfAlgo: String){
+    fileprivate func initiateTimer() {
+        timer.invalidate()
+        timer = Timer.scheduledTimer(withTimeInterval: (50 - self.speed) / 100, repeats: true, block: { _ in
+            for _ in 1...self.iterationsPerFrame{
+                if(!self.step()){
+                    self.timer.invalidate()
+                    break
+                }
+            }
+        })
+    }
+    
+    func startAnimation(_ nameOfAlgo: String){
+        initiateAlgorithm(nameOfAlgo: nameOfAlgo)
+        
+        initiateTimer()
+    }
+    
+    private func initiateAlgorithm(nameOfAlgo: String){
         
         guard let start = start_pos, let end = end_pos else{
             // to be changed with visual error
@@ -181,6 +228,7 @@ class GraphicsView : NSView{
     }
     
     func reset(){
+        timer.invalidate()
         algo = nil
         needsDisplay = true
     }

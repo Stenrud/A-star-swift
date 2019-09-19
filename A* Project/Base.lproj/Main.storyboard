@@ -741,7 +741,7 @@
                                 <constraints>
                                     <constraint firstAttribute="width" constant="154" id="hUu-7V-TGX"/>
                                 </constraints>
-                                <sliderCell key="cell" alignment="left" maxValue="50" doubleValue="25" tickMarkPosition="above" sliderType="linear" id="g8T-MC-aXf">
+                                <sliderCell key="cell" state="on" alignment="left" maxValue="50" doubleValue="25" tickMarkPosition="above" sliderType="linear" id="g8T-MC-aXf">
                                     <connections>
                                         <action selector="changeSpeed:" target="XfG-lQ-9wD" id="nq2-qa-pha"/>
                                     </connections>
@@ -872,8 +872,6 @@
                         <outlet property="algorithms" destination="uR9-LB-WrD" id="Os1-6m-zUz"/>
                         <outlet property="graphicsView" destination="QAb-7S-Xg5" id="txr-7G-CRV"/>
                         <outlet property="mazes" destination="Edc-KO-Ngy" id="Ml9-08-e82"/>
-                        <outlet property="speedSlider" destination="g8T-MC-aXf" id="SeI-y3-2ge"/>
-                        <outlet property="speedStepper" destination="STN-9h-tUJ" id="jnF-lE-10O"/>
                         <outlet property="speedText" destination="0rr-fh-DH2" id="ZEq-Wr-Bob"/>
                     </connections>
                 </viewController>
