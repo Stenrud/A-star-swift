@@ -64,6 +64,7 @@ class GraphicsView : NSView{
     }
     
     override func mouseDown(with event: NSEvent) {
+        reset()
         handleLeftClick(point: event.locationInWindow)
         isDragging = true
     }
@@ -138,8 +139,6 @@ class GraphicsView : NSView{
             board[x] [y] = board[x][y] == 1 ? -1 : 1
             lastCell = NSPoint(x: x, y: y)
         }
-        
-       // reset()
     }
     
     func drawLine(from: NSPoint, to: NSPoint, with: Int){
@@ -225,12 +224,6 @@ class GraphicsView : NSView{
             // not sure what to do here
             fatalError("Algorithm must be added to switch case: " + nameOfAlgo)
         }
-    }
-    
-    func reset(){
-        timer.invalidate()
-        algo = nil
-        needsDisplay = true
     }
     
     override func draw(_ dirtyRect: NSRect) {
@@ -328,6 +321,12 @@ class GraphicsView : NSView{
             //drawRect(x: point.x, y: point.y, size: 0.3)
             lastPoint = point//drawRect(x: point.x, y: point.y, size: 0.3)
         }
-    
     }
+    
+    func reset(){
+        timer.invalidate()
+        algo = nil
+        needsDisplay = true
+    }
+    
 }
